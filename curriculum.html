@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curriculum - Fashion Marketing Lab</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 214, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+            color: #FFD600;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #FFD600;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #FFD600;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        /* Page Header */
+        .page-header {
+            padding: 12rem 4rem 6rem;
+            background: #000;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 5rem;
+            font-weight: 900;
+            color: #FFD600;
+            margin-bottom: 1rem;
+            letter-spacing: -2px;
+        }
+
+        .page-header p {
+            font-size: 1.3rem;
+            opacity: 0.7;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Content Container */
+        .content-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 4rem 8rem;
+        }
+
+        .section-label {
+            color: #FFD600;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 3rem;
+        }
+
+        /* Course Cards */
+        .course-grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .course-card {
+            background: #000;
+            padding: 2.5rem;
+            border-left: 6px solid #FFD600;
+            transition: all 0.3s;
+        }
+
+        .course-card:hover {
+            transform: translateX(10px);
+            border-left-width: 10px;
+            background: #0a0a0a;
+        }
+
+        .course-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .course-title-group h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .course-code {
+            color: #FFD600;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .course-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-tag {
+            padding: 0.4rem 0.9rem;
+            background: rgba(255, 214, 0, 0.2);
+            color: #FFD600;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .course-description {
+            opacity: 0.8;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .course-topics {
+            margin-top: 1.5rem;
+        }
+
+        .course-topics h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+            color: #FFD600;
+        }
+
+        .topics-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.5rem;
+        }
+
+        .topic-item {
+            padding: 0.5rem 0;
+            opacity: 0.7;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .topic-item::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #FFD600;
+        }
+
+        /* Level Badges */
+        .level-badge {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            font-weight: 700;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+        }
+
+        .level-beginner {
+            background: #10B981;
+            color: #000;
+        }
+
+        .level-intermediate {
+            background: #4A90E2;
+            color: #fff;
+        }
+
+        .level-advanced {
+            background: #E91E63;
+            color: #fff;
+        }
+
+        /* Program Tracks */
+        .program-tracks {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .track-card {
+            background: #000;
+            padding: 2.5rem;
+            border-top: 4px solid #FFD600;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .track-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(255, 214, 0, 0.2);
+        }
+
+        .track-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .track-card h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .track-card p {
+            opacity: 0.7;
+            line-height: 1.6;
+        }
+
+        /* Skills Grid */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .skill-tag {
+            padding: 1rem;
+            background: #000;
+            text-align: center;
+            font-weight: 700;
+            border: 2px solid #FFD600;
+            transition: all 0.3s;
+        }
+
+        .skill-tag:hover {
+            background: #FFD600;
+            color: #000;
+        }
+
+        /* Learning Path */
+        .learning-path {
+            background: #000;
+            padding: 3rem;
+            margin: 4rem 0;
+        }
+
+        .path-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .path-step {
+            flex: 1;
+            text-align: center;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: #FFD600;
+            color: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            margin: 0 auto 1rem;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-description {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .path-arrow {
+            color: #FFD600;
+            font-size: 2rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem;
+            background: #000;
+            text-align: center;
+            border-top: 1px solid #FFD600;
+        }
+
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #FFD600;
+            margin-bottom: 2rem;
+        }
+
+        .footer-info {
+            opacity: 0.6;
+            line-height: 1.8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 1rem 1.5rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.85rem;
+            }
+
+            .page-header {
+                padding: 10rem 2rem 4rem;
+            }
+
+            .page-header h1 {
+                font-size: 3rem;
+            }
+
+            .content-container {
+                padding: 3rem 2rem;
+            }
+
+            .course-header {
+                flex-direction: column;
+            }
+
+            .path-steps {
+                flex-direction: column;
+            }
+
+            .path-arrow {
+                transform: rotate(90deg);
+            }
+
+            .topics-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <a href="index.html" class="logo">FML</a>
+        <ul class="nav-links">
+            <li><a href="index.html">HOME</a></li>
+            <li><a href="research.html">RESEARCH</a></li>
+            <li><a href="activities.html">ACTIVITIES</a></li>
+            <li><a href="curriculum.html" class="active">CURRICULUM</a></li>
+        </ul>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <h1>CURRICULUM</h1>
+        <p>Comprehensive education programs combining fashion expertise with data science and AI technology</p>
+    </section>
+
+    <!-- Content Container -->
+    <div class="content-container">
+        <!-- Program Tracks -->
+        <div class="section-label">LEARNING TRACKS</div>
+        <h2 class="section-title">Educational Programs</h2>
+
+        <div class="program-tracks">
+            <div class="track-card">
+                <div class="track-icon">📊</div>
+                <h3>Data Analytics Track</h3>
+                <p>Master data collection, analysis, and visualization techniques specifically designed for fashion industry applications.</p>
+            </div>
+
+            <div class="track-card">
+                <div class="track-icon">🤖</div>
+                <h3>AI & Machine Learning</h3>
+                <p>Learn to implement AI solutions, chatbots, and predictive models for fashion marketing and consumer insights.</p>
+            </div>
+
+            <div class="track-card">
+                <div class="track-icon">💼</div>
+                <h3>Fashion Marketing</h3>
+                <p>Combine traditional marketing principles with modern digital strategies and consumer behavior analysis.</p>
+            </div>
+        </div>
+
+        <!-- Course Listings -->
+        <div class="section-label" style="margin-top: 6rem;">COURSE CATALOG</div>
+        <h2 class="section-title">Available Courses</h2>
+
+        <div class="course-grid">
+            <!-- Course 1 -->
+            <div class="course-card">
+                <div class="course-header">
+                    <div class="course-title-group">
+                        <h3>Fashion Data Analytics Fundamentals</h3>
+                        <p class="course-code">FML 301</p>
+                    </div>
+                    <div class="course-meta">
+                        <span class="meta-tag">3 CREDITS</span>
+                        <span class="meta-tag">FALL</span>
+                        <span class="level-badge level-beginner">BEGINNER</span>
+                    </div>
+                </div>
+                <p class="course-description">
+                    Introduction to data analytics in the fashion industry. Students learn Python programming, 
+                    data manipulation with Pandas, and basic statistical analysis. Covers web scraping techniques 
+                    for fashion e-commerce platforms and social media data collection.
+                </p>
+                <div class="course-topics">
+                    <h4>Key Topics</h4>
+                    <div class="topics-list">
+                        <div class="topic-item">Python Basics</div>
+                        <div class="topic-item">Data Cleaning</div>
+                        <div class="topic-item">Web Scraping</div>
+                        <div class="topic-item">Statistical Analysis</div>
+                        <div class="topic-item">Visualization</div>
+                        <div class="topic-item">Project Work</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course 2 -->
+            <div class="course-card">
+                <div class="course-header">
+                    <div class="course-title-group">
+                        <h3>AI Chatbots for Fashion Retail</h3>
+                        <p class="course-code">FML 401</p>
+                    </div>
+                    <div class="course-meta">
+                        <span class="meta-tag">3 CREDITS</span>
+                        <span class="meta-tag">SPRING</span>
+                        <span class="level-badge level-advanced">ADVANCED</span>
+                    </div>
+                </div>
+                <p class="course-description">
+                    Advanced course on designing and implementing AI-powered chatbots for fashion retail. 
+                    Students work with LLM APIs, learn prompt engineering, and develop conversational AI 
+                    systems that enhance customer experience and drive sales.
+                </p>
+                <div class="course-topics">
+                    <h4>Key Topics</h4>
+                    <div class="topics-list">
+                        <div class="topic-item">LLM Integration</div>
+                        <div class="topic-item">Prompt Engineering</div>
+                        <div class="topic-item">Chatbot Design</div>
+                        <div class="topic-item">User Experience</div>
+                        <div class="topic-item">A/B Testing</div>
+                        <div class="topic-item">Performance Metrics</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course 3 -->
+            <div class="course-card">
+                <div class="course-header">
+                    <div class="course-title-group">
+                        <h3>Social Media Analytics for Fashion</h3>
+                        <p class="course-code">FML 302</p>
+                    </div>
+                    <div class="course-meta">
+                        <span class="meta-tag">3 CREDITS</span>
+                        <span class="meta-tag">FALL</span>
+                        <span class="level-badge level-intermediate">INTERMEDIATE</span>
+                    </div>
+                </div>
+                <p class="course-description">
+                    Comprehensive study of social media analytics in fashion marketing. Students analyze 
+                    Instagram, TikTok, and other platforms to understand engagement patterns, influencer 
+                    impact, and content strategy effectiveness using advanced statistical methods.
+                </p>
+                <div class="course-topics">
+                    <h4>Key Topics</h4>
+                    <div class="topics-list">
+                        <div class="topic-item">API Integration</div>
+                        <div class="topic-item">Sentiment Analysis</div>
+                        <div class="topic-item">Network Analysis</div>
+                        <div class="topic-item">Trend Prediction</div>
+                        <div class="topic-item">Influencer Analytics</div>
+                        <div class="topic-item">Campaign ROI</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course 4 -->
+            <div class="course-card">
+                <div class="course-header">
+                    <div class="course-title-group">
+                        <h3>Machine Learning for Fashion Marketing</h3>
+                        <p class="course-code">FML 402</p>
+                    </div>
+                    <div class="course-meta">
+                        <span class="meta-tag">3 CREDITS</span>
+                        <span class="meta-tag">SPRING</span>
+                        <span class="level-badge level-advanced">ADVANCED</span>
+                    </div>
+                </div>
+                <p class="course-description">
+                    Apply machine learning algorithms to fashion marketing challenges. Topics include 
+                    customer segmentation, recommendation systems, demand forecasting, and price optimization. 
+                    Hands-on experience with scikit-learn, XGBoost, and deep learning frameworks.
+                </p>
+                <div class="course-topics">
+                    <h4>Key Topics</h4>
+                    <div class="topics-list">
+                        <div class="topic-item">Supervised Learning</div>
+                        <div class="topic-item">Unsupervised Learning</div>
+                        <div class="topic-item">Recommendation Systems</div>
+                        <div class="topic-item">Neural Networks</div>
+                        <div class="topic-item">Model Deployment</div>
+                        <div class="topic-item">Ethics in AI</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course 5 -->
+            <div class="course-card">
+                <div class="course-header">
+                    <div class="course-title-group">
+                        <h3>Consumer Behavior in Digital Fashion</h3>
+                        <p class="course-code">FML 303</p>
+                    </div>
+                    <div class="course-meta">
+                        <span class="meta-tag">3 CREDITS</span>
+                        <span class="meta-tag">BOTH</span>
+                        <span class="level-badge level-intermediate">INTERMEDIATE</span>
+                    </div>
+                </div>
+                <p class="course-description">
+                    Explore psychological and behavioral aspects of fashion consumption in digital environments. 
+                    Combines theoretical frameworks with empirical research methods including surveys, 
+                    experiments, and structural equation modeling (SEM).
+                </p>
+                <div class="course-topics">
+                    <h4>Key Topics</h4>
+                    <div class="topics-list">
+                        <div class="topic-item">Consumer Psychology</div>
+                        <div class="topic-item">Research Design</div>
+                        <div class="topic-item">SEM Analysis</div>
+                        <div class="topic-item">Survey Methods</div>
+                        <div class="topic-item">User Experience</div>
+                        <div class="topic-item">Behavioral Economics</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course 6 -->
+            <div class="course-card">
+                <div class="course-header">
+                    <div class="course-title-group">
+                        <h3>Fashion Industry Capstone Project</h3>
+                        <p class="course-code">FML 499</p>
+                    </div>
+                    <div class="course-meta">
+                        <span class="meta-tag">6 CREDITS</span>
+                        <span class="meta-tag">SPRING</span>
+                        <span class="level-badge level-advanced">ADVANCED</span>
+                    </div>
+                </div>
+                <p class="course-description">
+                    Final integrative project where students work with real fashion companies to solve 
+                    actual business challenges. Projects combine research, data analysis, and strategic 
+                    recommendations. Culminates in presentation to industry partners.
+                </p>
+                <div class="course-topics">
+                    <h4>Key Topics</h4>
+                    <div class="topics-list">
+                        <div class="topic-item">Industry Partnership</div>
+                        <div class="topic-item">Problem Definition</div>
+                        <div class="topic-item">Research Execution</div>
+                        <div class="topic-item">Data Analysis</div>
+                        <div class="topic-item">Strategic Planning</div>
+                        <div class="topic-item">Final Presentation</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Learning Path -->
+        <div class="section-label" style="margin-top: 6rem;">LEARNING PATH</div>
+        <h2 class="section-title">Your Journey</h2>
+
+        <div class="learning-path">
+            <div class="path-steps">
+                <div class="path-step">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Foundation</div>
+                    <div class="step-description">Learn programming and data basics</div>
+                </div>
+                <div class="path-arrow">→</div>
+                <div class="path-step">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Application</div>
+                    <div class="step-description">Apply skills to fashion contexts</div>
+                </div>
+                <div class="path-arrow">→</div>
+                <div class="path-step">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Specialization</div>
+                    <div class="step-description">Choose AI, analytics, or marketing track</div>
+                </div>
+                <div class="path-arrow">→</div>
+                <div class="path-step">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Integration</div>
+                    <div class="step-description">Complete capstone project</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Skills Gained -->
+        <div class="section-label" style="margin-top: 4rem;">SKILLS YOU'LL GAIN</div>
+        <h2 class="section-title">Technical & Professional Skills</h2>
+
+        <div class="skills-grid">
+            <div class="skill-tag">Python</div>
+            <div class="skill-tag">R</div>
+            <div class="skill-tag">Machine Learning</div>
+            <div class="skill-tag">SQL</div>
+            <div class="skill-tag">Web Scraping</div>
+            <div class="skill-tag">Data Visualization</div>
+            <div class="skill-tag">NLP</div>
+            <div class="skill-tag">SEM</div>
+            <div class="skill-tag">A/B Testing</div>
+            <div class="skill-tag">API Integration</div>
+            <div class="skill-tag">LLM Development</div>
+            <div class="skill-tag">Research Design</div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">FASHION MARKETING LAB</div>
+        <div class="footer-info">
+            <p>Department of Fashion Industry<br>
+            Incheon National University<br>
+            119 Academy-ro, Yeonsu-gu, Incheon, Republic of Korea</p>
+            <p style="margin-top: 2rem;">© 2024 Fashion Marketing Lab. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Nav background on scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.background = 'rgba(26, 26, 26, 1)';
+            } else {
+                nav.style.background = 'rgba(26, 26, 26, 0.95)';
+            }
+        });
+    </script>
+</body>
+</html>
