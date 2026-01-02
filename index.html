@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fashion Marketing Lab - Incheon National University</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 214, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+            color: #FFD600;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #FFD600;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #FFD600;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section with Spline */
+        .hero {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+        }
+
+        .spline-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.7;
+        }
+
+        .spline-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(26,26,26,0.8) 100%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            max-width: 900px;
+            padding: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 5rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            line-height: 1;
+            color: #FFD600;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .hero-tagline {
+            font-size: 1.1rem;
+            opacity: 0.7;
+            margin-bottom: 3rem;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .scroll-text {
+            font-size: 0.9rem;
+            opacity: 0.6;
+            margin-bottom: 0.5rem;
+        }
+
+        .scroll-line {
+            width: 2px;
+            height: 40px;
+            background: #FFD600;
+            margin: 0 auto;
+            animation: scroll 1.5s infinite;
+        }
+
+        @keyframes scroll {
+            0%, 100% { opacity: 0; transform: translateY(0); }
+            50% { opacity: 1; transform: translateY(10px); }
+        }
+
+        /* Equalizer Graphics */
+        .equalizer {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 3rem 0;
+        }
+
+        .eq-bar {
+            width: 40px;
+            background: #FFD600;
+            animation: eq 1.2s ease-in-out infinite;
+        }
+
+        .eq-bar:nth-child(1) { height: 80px; animation-delay: 0s; }
+        .eq-bar:nth-child(2) { height: 120px; animation-delay: 0.1s; }
+        .eq-bar:nth-child(3) { height: 60px; animation-delay: 0.2s; }
+        .eq-bar:nth-child(4) { height: 100px; animation-delay: 0.3s; }
+        .eq-bar:nth-child(5) { height: 140px; animation-delay: 0.4s; }
+        .eq-bar:nth-child(6) { height: 90px; animation-delay: 0.5s; }
+        .eq-bar:nth-child(7) { height: 110px; animation-delay: 0.6s; }
+        .eq-bar:nth-child(8) { height: 130px; animation-delay: 0.7s; }
+
+        @keyframes eq {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(0.6); }
+        }
+
+        /* About Section */
+        .about {
+            padding: 8rem 4rem;
+            background: #000;
+        }
+
+        .about-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-label {
+            color: #FFD600;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+
+        .about h2 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 2rem;
+            line-height: 1.2;
+        }
+
+        .about-text {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            opacity: 0.8;
+            max-width: 800px;
+            margin-bottom: 3rem;
+        }
+
+        /* Quick Links Section */
+        .quick-links {
+            padding: 6rem 4rem;
+            background: #1a1a1a;
+        }
+
+        .quick-links-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .link-card {
+            background: #000;
+            padding: 3rem 2rem;
+            border-radius: 0;
+            border-left: 4px solid #FFD600;
+            transition: all 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: #fff;
+            display: block;
+        }
+
+        .link-card:hover {
+            transform: translateX(10px);
+            border-left-width: 8px;
+            background: #0a0a0a;
+        }
+
+        .link-card h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .link-card p {
+            opacity: 0.7;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .link-arrow {
+            color: #FFD600;
+            font-size: 1.5rem;
+        }
+
+        /* Color Bands */
+        .color-bands {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .band {
+            padding: 3rem 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .band h3 {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .band p {
+            max-width: 600px;
+            opacity: 0.9;
+        }
+
+        .band-yellow { background: #FFD600; color: #000; }
+        .band-blue { background: #4A90E2; color: #fff; }
+        .band-pink { background: #E91E63; color: #fff; }
+        .band-orange { background: #FF6B35; color: #fff; }
+        .band-green { background: #10B981; color: #fff; }
+
+        /* Footer */
+        footer {
+            padding: 4rem;
+            background: #000;
+            text-align: center;
+            border-top: 1px solid #FFD600;
+        }
+
+        .footer-logo {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #FFD600;
+            margin-bottom: 2rem;
+        }
+
+        .footer-info {
+            opacity: 0.6;
+            line-height: 1.8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 1rem 1.5rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.85rem;
+            }
+
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .about, .quick-links {
+                padding: 4rem 2rem;
+            }
+
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .band {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">Fashiondata00Lab</div>
+        <ul class="nav-links">
+            <li><a href="index.html">HOME</a></li>
+            <li><a href="research.html">RESEARCH</a></li>
+            <li><a href="activities.html">ACTIVITIES</a></li>
+            <li><a href="curriculum.html">CURRICULUM</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="spline-container">
+            <iframe src='https://my.spline.design/hellodistortingintro-DlDWt1j2rmOK9OFENAdC6tKQ/' 
+                    frameborder='0'></iframe>
+        </div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1>FASHION<br>MARKETING<br>LAB</h1>
+            <p class="hero-subtitle">Incheon National University</p>
+            <p class="hero-tagline">Where Data Meets Style</p>
+        </div>
+        <div class="scroll-indicator">
+            <div class="scroll-text">SCROLL</div>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- Equalizer -->
+    <section style="background: #000; padding: 4rem 0;">
+        <div class="equalizer">
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+        </div>
+    </section>
+
+    <!-- About -->
+    <section class="about">
+        <div class="about-container">
+            <div class="section-label">ABOUT US</div>
+            <h2>Research that shapes how<br>fashion is understood.</h2>
+            <p class="about-text">
+                We are a leading research laboratory specializing in fashion consumer behavior, 
+                AI-powered analytics, and marketing innovation. Our work combines cutting-edge 
+                technology with deep insights into fashion industry dynamics, creating impactful 
+                research that bridges academia and industry.
+            </p>
+        </div>
+    </section>
+
+    <!-- Quick Links -->
+    <section class="quick-links">
+        <div class="quick-links-container">
+            <div class="section-label">EXPLORE</div>
+            <h2>Discover our work</h2>
+            <div class="links-grid">
+                <a href="research.html" class="link-card">
+                    <h3>Research</h3>
+                    <p>Explore our published papers, ongoing projects, and academic contributions to fashion marketing.</p>
+                    <span class="link-arrow">→</span>
+                </a>
+                <a href="activities.html" class="link-card">
+                    <h3>Activities</h3>
+                    <p>Discover our conferences, workshops, collaborations, and industry partnerships.</p>
+                    <span class="link-arrow">→</span>
+                </a>
+                <a href="curriculum.html" class="link-card">
+                    <h3>Curriculum</h3>
+                    <p>View our comprehensive course offerings and educational programs in fashion analytics.</p>
+                    <span class="link-arrow">→</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">FASHION MARKETING DATA LAB</div>
+        <div class="footer-info">
+            <p>Department of Fashion Industry<br>
+            Incheon National University<br>
+            119 Academy-ro, Yeonsu-gu, Incheon, Republic of Korea</p>
+            <p style="margin-top: 2rem;">© 2024 Fashion Marketing Lab. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Nav background on scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.background = 'rgba(26, 26, 26, 1)';
+            } else {
+                nav.style.background = 'rgba(26, 26, 26, 0.95)';
+            }
+        });
+    </script>
+</body>
+</html>
