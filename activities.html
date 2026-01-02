@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activities - Fashion Marketing Lab</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 214, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+            color: #FFD600;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #FFD600;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #FFD600;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        /* Page Header */
+        .page-header {
+            padding: 12rem 4rem 6rem;
+            background: #000;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 5rem;
+            font-weight: 900;
+            color: #FFD600;
+            margin-bottom: 1rem;
+            letter-spacing: -2px;
+        }
+
+        .page-header p {
+            font-size: 1.3rem;
+            opacity: 0.7;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Content Container */
+        .content-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 4rem 8rem;
+        }
+
+        .section-label {
+            color: #FFD600;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 3rem;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 3rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #FFD600;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 4rem;
+            padding: 2rem;
+            background: #000;
+            border-left: 4px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .timeline-item:hover {
+            transform: translateX(10px);
+            border-left-color: #FFD600;
+            background: #0a0a0a;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -3.5rem;
+            top: 2rem;
+            width: 12px;
+            height: 12px;
+            background: #FFD600;
+            border-radius: 50%;
+            border: 3px solid #1a1a1a;
+        }
+
+        .timeline-date {
+            color: #FFD600;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .timeline-item h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+        }
+
+        .timeline-location {
+            opacity: 0.6;
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+
+        .timeline-description {
+            opacity: 0.8;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .timeline-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 0.3rem 0.8rem;
+            background: rgba(255, 214, 0, 0.2);
+            color: #FFD600;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        /* Collaboration Grid */
+        .collab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .collab-card {
+            background: #000;
+            padding: 2.5rem;
+            border-top: 4px solid #FFD600;
+            transition: all 0.3s;
+        }
+
+        .collab-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(255, 214, 0, 0.2);
+        }
+
+        .collab-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .collab-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .collab-card p {
+            opacity: 0.7;
+            line-height: 1.6;
+        }
+
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .gallery-item {
+            aspect-ratio: 1;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .gallery-item:hover {
+            border-color: #FFD600;
+            transform: scale(1.05);
+        }
+
+        /* Stats Banner */
+        .stats-banner {
+            background: #000;
+            padding: 4rem;
+            margin: 4rem 0;
+            text-align: center;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
+            padding: 1rem;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #FFD600;
+        }
+
+        .stat-label {
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem;
+            background: #000;
+            text-align: center;
+            border-top: 1px solid #FFD600;
+        }
+
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #FFD600;
+            margin-bottom: 2rem;
+        }
+
+        .footer-info {
+            opacity: 0.6;
+            line-height: 1.8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 1rem 1.5rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.85rem;
+            }
+
+            .page-header {
+                padding: 10rem 2rem 4rem;
+            }
+
+            .page-header h1 {
+                font-size: 3rem;
+            }
+
+            .content-container {
+                padding: 3rem 2rem;
+            }
+
+            .timeline {
+                padding-left: 2rem;
+            }
+
+            .timeline-dot {
+                left: -2.5rem;
+            }
+
+            .stats-row {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .collab-grid,
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <a href="index.html" class="logo">FML</a>
+        <ul class="nav-links">
+            <li><a href="index.html">HOME</a></li>
+            <li><a href="research.html">RESEARCH</a></li>
+            <li><a href="activities.html" class="active">ACTIVITIES</a></li>
+            <li><a href="curriculum.html">CURRICULUM</a></li>
+        </ul>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <h1>ACTIVITIES</h1>
+        <p>Building bridges between academia and industry through conferences, workshops, and collaborations</p>
+    </section>
+
+    <!-- Content Container -->
+    <div class="content-container">
+        <!-- Recent Activities Timeline -->
+        <div class="section-label">RECENT ACTIVITIES</div>
+        <h2 class="section-title">Events & Conferences</h2>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-date">December 2024</div>
+                <h3>International Conference on Fashion Technology and Innovation</h3>
+                <p class="timeline-location">Seoul, Korea</p>
+                <p class="timeline-description">
+                    Keynote presentation on "AI-Powered Consumer Insights in Fashion Retail" with over 300 
+                    international attendees. Featured case studies on implementing LLM chatbots in luxury fashion brands.
+                </p>
+                <div class="timeline-tags">
+                    <span class="tag">KEYNOTE</span>
+                    <span class="tag">AI</span>
+                    <span class="tag">INTERNATIONAL</span>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-date">November 2024</div>
+                <h3>Fashion Data Analytics Workshop</h3>
+                <p class="timeline-location">Incheon National University</p>
+                <p class="timeline-description">
+                    Organized and conducted a 3-day intensive workshop on web scraping and data analysis for 
+                    fashion industry professionals. Covered Python programming, social media analytics, and 
+                    predictive modeling with 45 participants from leading Korean fashion companies.
+                </p>
+                <div class="timeline-tags">
+                    <span class="tag">WORKSHOP</span>
+                    <span class="tag">INDUSTRY</span>
+                    <span class="tag">TRAINING</span>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-date">October 2024</div>
+                <h3>Global Fashion Business Association Annual Meeting</h3>
+                <p class="timeline-location">New York, USA</p>
+                <p class="timeline-description">
+                    Presented research findings on psychological empowerment through chatbot interactions. 
+                    Participated in panel discussion on "The Future of AI in Fashion Retail" alongside 
+                    industry leaders from major fashion brands.
+                </p>
+                <div class="timeline-tags">
+                    <span class="tag">CONFERENCE</span>
+                    <span class="tag">PANEL</span>
+                    <span class="tag">USA</span>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-date">September 2024</div>
+                <h3>Industry-Academia Collaboration Forum</h3>
+                <p class="timeline-location">Seoul Fashion Week</p>
+                <p class="timeline-description">
+                    Led collaborative session between fashion brands and research institutions to identify 
+                    key challenges in digital transformation. Facilitated discussion on implementing AI 
+                    solutions in traditional fashion businesses.
+                </p>
+                <div class="timeline-tags">
+                    <span class="tag">COLLABORATION</span>
+                    <span class="tag">INDUSTRY</span>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-date">August 2024</div>
+                <h3>Summer Research Symposium</h3>
+                <p class="timeline-location">Incheon National University</p>
+                <p class="timeline-description">
+                    Annual lab symposium showcasing student research projects and ongoing collaborations. 
+                    Featured presentations from 15 research projects covering topics from social media 
+                    analytics to AI chatbot development.
+                </p>
+                <div class="timeline-tags">
+                    <span class="tag">SYMPOSIUM</span>
+                    <span class="tag">STUDENTS</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Industry Collaborations 
+        <div class="section-label" style="margin-top: 6rem;">COLLABORATIONS</div>
+        <h2 class="section-title">Industry Partners</h2>
+
+        <div class="collab-grid">
+            <div class="collab-card">
+                <div class="collab-icon">🏢</div>
+                <h3>Global Fashion Brands</h3>
+                <p>
+                    Ongoing research partnerships with leading international fashion brands to develop 
+                    AI-powered customer engagement solutions and data analytics platforms.
+                </p>
+            </div>
+
+            <div class="collab-card">
+                <div class="collab-icon">🛍️</div>
+                <h3>E-commerce Platforms</h3>
+                <p>
+                    Collaboration with major Korean fashion e-commerce platforms on personalization 
+                    algorithms and consumer behavior analysis.
+                </p>
+            </div>
+
+            <div class="collab-card">
+                <div class="collab-icon">🤝</div>
+                <h3>Tech Companies</h3>
+                <p>
+                    Joint projects with AI and tech companies to develop cutting-edge chatbot technologies 
+                    specifically designed for fashion retail applications.
+                </p>
+            </div>
+
+            <div class="collab-card">
+                <div class="collab-icon">🎓</div>
+                <h3>Academic Networks</h3>
+                <p>
+                    International research collaborations with universities in US, UK, and Asia on 
+                    cross-cultural consumer behavior studies.
+                </p>
+            </div>
+
+            <div class="collab-card">
+                <div class="collab-icon">📊</div>
+                <h3>Market Research Firms</h3>
+                <p>
+                    Partnership with leading market research companies for large-scale data collection 
+                    and analysis in fashion industry insights.
+                </p>
+            </div>
+
+            <div class="collab-card">
+                <div class="collab-icon">💡</div>
+                <h3>Startups & Innovation</h3>
+                <p>
+                    Supporting fashion tech startups with research insights and analytical capabilities 
+                    to drive innovation in the industry.
+                </p>
+            </div>
+        </div>
+ -->
+        <!-- Activity Gallery 
+        <div class="section-label" style="margin-top: 6rem;">GALLERY</div>
+        <h2 class="section-title">Event Highlights</h2>
+
+        <div class="gallery-grid">
+            <div class="gallery-item">📸</div>
+            <div class="gallery-item">🎤</div>
+            <div class="gallery-item">👥</div>
+            <div class="gallery-item">💼</div>
+            <div class="gallery-item">🎯</div>
+            <div class="gallery-item">🌐</div>
+            <div class="gallery-item">📱</div>
+            <div class="gallery-item">✨</div>
+        </div>
+    </div>
+-->
+    <!-- Stats Banner 
+    <section class="stats-banner">
+        <div class="stats-row">
+            <div class="stat-item">
+                <div class="stat-number">25+</div>
+                <div class="stat-label">Conferences Attended</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">15</div>
+                <div class="stat-label">Industry Partners</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">30+</div>
+                <div class="stat-label">Workshops Conducted</div>
+            </div>
+        </div>
+    </section>
+-->
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">FASHION MARKETING LAB</div>
+        <div class="footer-info">
+            <p>Department of Fashion Industry<br>
+            Incheon National University<br>
+            119 Academy-ro, Yeonsu-gu, Incheon, Republic of Korea</p>
+            <p style="margin-top: 2rem;">© 2024 Fashion Marketing Lab. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Nav background on scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.background = 'rgba(26, 26, 26, 1)';
+            } else {
+                nav.style.background = 'rgba(26, 26, 26, 0.95)';
+            }
+        });
+
+        // Gallery item interaction
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        galleryItems.forEach(item => {
+            item.addEventListener('click', function() {
+                alert('Gallery image would open here');
+            });
+        });
+    </script>
+</body>
+</html>
