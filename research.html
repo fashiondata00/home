@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research - Fashion Marketing Lab</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 214, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+            color: #FFD600;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #FFD600;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #FFD600;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        /* Page Header */
+        .page-header {
+            padding: 12rem 4rem 6rem;
+            background: #000;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 5rem;
+            font-weight: 900;
+            color: #FFD600;
+            margin-bottom: 1rem;
+            letter-spacing: -2px;
+        }
+
+        .page-header p {
+            font-size: 1.3rem;
+            opacity: 0.7;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Content Container */
+        .content-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 4rem 8rem;
+        }
+
+        .section-label {
+            color: #FFD600;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 3rem;
+        }
+
+        /* Research Categories */
+        .research-categories {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 0.8rem 1.5rem;
+            background: transparent;
+            border: 2px solid #FFD600;
+            color: #FFD600;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .category-btn:hover,
+        .category-btn.active {
+            background: #FFD600;
+            color: #000;
+        }
+
+        /* Research Grid */
+        .research-grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .research-card {
+            background: #000;
+            padding: 2.5rem;
+            border-left: 4px solid #FFD600;
+            transition: all 0.3s;
+        }
+
+        .research-card:hover {
+            transform: translateX(10px);
+            border-left-width: 8px;
+        }
+
+        .research-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .research-tag {
+            padding: 0.3rem 0.8rem;
+            background: #FFD600;
+            color: #000;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .research-year {
+            padding: 0.3rem 0.8rem;
+            background: rgba(255, 214, 0, 0.2);
+            color: #FFD600;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .research-card h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .research-authors {
+            color: #FFD600;
+            font-size: 0.95rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .research-journal {
+            opacity: 0.8;
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+
+        .research-abstract {
+            opacity: 0.7;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .research-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .research-link {
+            padding: 0.6rem 1.2rem;
+            background: rgba(255, 214, 0, 0.1);
+            color: #FFD600;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .research-link:hover {
+            background: #FFD600;
+            color: #000;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: #000;
+            padding: 6rem 4rem;
+            margin: 4rem 0;
+        }
+
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+            text-align: center;
+        }
+
+        .stat-card {
+            padding: 2rem;
+        }
+
+        .stat-number {
+            font-size: 4rem;
+            font-weight: 900;
+            color: #FFD600;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem;
+            background: #000;
+            text-align: center;
+            border-top: 1px solid #FFD600;
+        }
+
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #FFD600;
+            margin-bottom: 2rem;
+        }
+
+        .footer-info {
+            opacity: 0.6;
+            line-height: 1.8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 1rem 1.5rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.85rem;
+            }
+
+            .page-header {
+                padding: 10rem 2rem 4rem;
+            }
+
+            .page-header h1 {
+                font-size: 3rem;
+            }
+
+            .content-container {
+                padding: 3rem 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+
+            .stat-number {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <a href="index.html" class="logo">FML</a>
+        <ul class="nav-links">
+            <li><a href="index.html">HOME</a></li>
+            <li><a href="research.html" class="active">RESEARCH</a></li>
+            <li><a href="activities.html">ACTIVITIES</a></li>
+            <li><a href="curriculum.html">CURRICULUM</a></li>
+        </ul>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <h1>RESEARCH</h1>
+        <p>Advancing fashion marketing through rigorous academic research and data-driven insights</p>
+    </section>
+
+    <!-- Stats Section 
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">45+</div>
+                <div class="stat-label">Publications</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">12</div>
+                <div class="stat-label">SSCI Journals</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">8</div>
+                <div class="stat-label">Ongoing Projects</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">1500+</div>
+                <div class="stat-label">Citations</div>
+            </div>
+        </div>
+    </section>
+    -->
+
+    <!-- Research Content -->
+    <div class="content-container">
+        <!-- Published Research -->
+        <div class="section-label">PUBLISHED RESEARCH</div>
+        <h2 class="section-title">Recent Publications</h2>
+
+        <div class="research-categories">
+            <button class="category-btn active">All</button>
+            <button class="category-btn">AI & Chatbots</button>
+            <button class="category-btn">Consumer Behavior</button>
+            <button class="category-btn">Social Media</button>
+            <button class="category-btn">Fashion Analytics</button>
+        </div>
+
+        <div class="research-grid">
+            <div class="research-card">
+                <div class="research-meta">
+                    <span class="research-tag">AI & CHATBOTS</span>
+                    <span class="research-year">2024</span>
+                </div>
+                <h3>Psychological Empowerment through Fashion LLM Chatbots: The Role of Affordance Theory</h3>
+                <p class="research-authors">Kevin Lee, Co-authors</p>
+                <p class="research-journal">Journal of Fashion Marketing and Management (SSCI)</p>
+                <p class="research-abstract">
+                    This study examines how AI-powered chatbot affordances influence consumer psychological empowerment 
+                    in fashion retail contexts. Using structural equation modeling, we identify key chatbot features 
+                    that enhance user competence, meaning, and impact perceptions.
+                </p>
+            </div>
+
+            <div class="research-card">
+                <div class="research-meta">
+                    <span class="research-tag">CONSUMER BEHAVIOR</span>
+                    <span class="research-year">2024</span>
+                </div>
+                <h3>Hyper-Personalization in Fashion E-commerce: Effects on Purchase Intention and Customer Loyalty</h3>
+                <p class="research-authors">Kevin Lee, Research Team</p>
+                <p class="research-journal">International Journal of Retail & Distribution Management (SSCI)</p>
+                <p class="research-abstract">
+                    An empirical investigation of how hyper-personalized product recommendations influence consumer 
+                    decision-making processes in online fashion shopping environments. Mixed-methods approach combining 
+                    PLS-SEM with qualitative interviews.
+                </p>
+            </div>
+
+            <div class="research-card">
+                <div class="research-meta">
+                    <span class="research-tag">SOCIAL MEDIA</span>
+                    <span class="research-year">2023</span>
+                </div>
+                <h3>Instagram Engagement Patterns in Fashion Industry: A Machine Learning Approach</h3>
+                <p class="research-authors">Kevin Lee, Analytics Team</p>
+                <p class="research-journal">Journal of Business Research (SSCI)</p>
+                <p class="research-abstract">
+                    Utilizing XGBoost and SHAP analysis to uncover factors driving social media engagement for fashion 
+                    brands. Dataset includes 50,000+ Instagram posts analyzed through negative binomial regression and 
+                    advanced ML techniques.
+                </p>
+            </div>
+
+            <div class="research-card">
+                <div class="research-meta">
+                    <span class="research-tag">FASHION ANALYTICS</span>
+                    <span class="research-year">2023</span>
+                </div>
+                <h3>Web Scraping and Data Analytics for Fashion E-commerce: Methodological Framework</h3>
+                <p class="research-authors">Kevin Lee, Data Science Team</p>
+                <p class="research-journal">Fashion and Textiles (SSCI)</p>
+                <p class="research-abstract">
+                    Comprehensive methodological framework for automated data collection and analysis from fashion 
+                    e-commerce platforms. Includes practical applications using Python, sentiment analysis, and 
+                    predictive modeling.
+                </p>
+            </div>
+        </div>
+
+        <!-- Ongoing Projects -->
+        <div class="section-label" style="margin-top: 6rem;">ONGOING PROJECTS</div>
+        <h2 class="section-title">Current Research</h2>
+
+        <div class="research-grid">
+            <div class="research-card">
+                <div class="research-meta">
+                    <span class="research-tag">IN PROGRESS</span>
+                    <span class="research-year">2024-2025</span>
+                </div>
+                <h3>Conversational Continuity in Fashion AI: Building Long-term Customer Relationships</h3>
+                <p class="research-authors">Principal Investigator: Kevin Lee</p>
+                <p class="research-abstract">
+                    Investigating how conversational AI maintains context across multiple interactions to enhance 
+                    customer experience and brand loyalty in fashion retail. Multi-phase study combining theoretical 
+                    development with field experiments.
+                </p>
+            </div>
+
+            <div class="research-card">
+                <div class="research-meta">
+                    <span class="research-tag">IN PROGRESS</span>
+                    <span class="research-year">2024-2025</span>
+                </div>
+                <h3>Empathetic Response Systems in Fashion Chatbots: Emotional Intelligence in AI</h3>
+                <p class="research-authors">Principal Investigator: Kevin Lee</p>
+                <p class="research-abstract">
+                    Developing and testing empathetic response frameworks for fashion AI chatbots. Focus on measuring 
+                    emotional intelligence effectiveness and its impact on user satisfaction and purchase behavior.
+                </p>
+            </div>
+
+            <div class="research-card">
+                <div class="research-meta">
+                    <span class="research-tag">IN PROGRESS</span>
+                    <span class="research-year">2024-2026</span>
+                </div>
+                <h3>Cross-Cultural Fashion Consumer Behavior: Korea vs. Global Markets</h3>
+                <p class="research-authors">International Collaboration</p>
+                <p class="research-abstract">
+                    Comparative study examining cultural differences in fashion consumption patterns, social media 
+                    engagement, and technology acceptance across Korean and international markets.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">FASHION MARKETING LAB</div>
+        <div class="footer-info">
+            <p>Department of Fashion Industry<br>
+            Incheon National University<br>
+            119 Academy-ro, Yeonsu-gu, Incheon, Republic of Korea</p>
+            <p style="margin-top: 2rem;">© 2024 Fashion Marketing Lab. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Category filter functionality
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                // Add filtering logic here if needed
+            });
+        });
+
+        // Nav background on scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.background = 'rgba(26, 26, 26, 1)';
+            } else {
+                nav.style.background = 'rgba(26, 26, 26, 0.95)';
+            }
+        });
+    </script>
+</body>
+</html>
