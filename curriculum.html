@@ -272,6 +272,104 @@
             line-height: 1.6;
         }
 
+        /* Resource Box (Course Links) */
+        .resource-box {
+            background: #000;
+            padding: 3rem;
+            margin: 3rem 0;
+            border-left: 6px solid #FFD600;
+            transition: all 0.4s ease;
+            transform-style: preserve-3d;
+        }
+
+        .resource-box:hover {
+            transform: perspective(1000px) rotateY(5deg) rotateX(-2deg) translateX(10px);
+            border-left-width: 10px;
+            background: #0a0a0a;
+            box-shadow: -20px 20px 60px rgba(255, 214, 0, 0.3);
+        }
+
+        .resource-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .resource-header h3 {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .resource-badge {
+            padding: 0.4rem 0.9rem;
+            background: rgba(255, 214, 0, 0.2);
+            color: #FFD600;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .resource-description {
+            opacity: 0.8;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .resource-links {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .link-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: #1a1a1a;
+            border: 2px solid #333;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+
+        .link-item:hover {
+            border-color: #FFD600;
+            background: #222;
+            transform: translateX(15px) scale(1.03);
+            box-shadow: 0 10px 30px rgba(255, 214, 0, 0.4);
+        }
+
+        .link-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .link-content {
+            flex: 1;
+        }
+
+        .link-content h4 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #FFD600;
+        }
+
+        .link-content a {
+            color: #fff;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .link-content a:hover {
+            color: #FFD600;
+            opacity: 1;
+            transform: translateX(5px);
+        }
+
         /* Skills Grid */
         .skills-grid {
             display: grid;
@@ -401,6 +499,16 @@
             .topics-list {
                 grid-template-columns: 1fr;
             }
+
+            .resource-box {
+                padding: 2rem;
+            }
+
+            .link-item {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
         }
     </style>
 </head>
@@ -445,6 +553,40 @@
                 <div class="track-icon"></div>
                 <h3>Fashion Marketing</h3>
                 <p>Combine traditional marketing principles with modern digital strategies and consumer behavior analysis.</p>
+            </div>
+        </div>
+
+        <!-- Course Links & Resources Section -->
+        <div class="resource-box">
+            <div class="resource-header">
+                <h3>Course Links & Resources</h3>
+                <span class="resource-badge">UPDATED</span>
+            </div>
+            <p class="resource-description">
+                Access course materials, lecture recordings, and additional resources here.
+            </p>
+            <div class="resource-links">
+                <div class="link-item">
+                    <span class="link-icon"></span>
+                    <div class="link-content">
+                        <h4>ClassMaterials</h4>
+                        <a href="https://talented-boursin-bee.notion.site/VIbe-coding-Project-2dc7af5833848016b857c1ae09e5dff1?source=copy_link" target="_blank">https://talented-boursin-bee.notion.site/VIbe-coding-Project-2dc7af5833848016b857c1ae09e5dff1?source=copy_link</a>
+                    </div>
+                </div>
+                <div class="link-item">
+                    <span class="link-icon"></span>
+                    <div class="link-content">
+                        <h4>Lecture Recordings</h4>
+                        <a href="https://youtube.com" target="_blank">Underconstruction - Fall 2024</a>
+                    </div>
+                </div>
+                <div class="link-item">
+                    <span class="link-icon"></span>
+                    <div class="link-content">
+                        <h4>Contact</h4>
+                        <a href="fashiondata00@inu.ac.kr">fashiondata00@inu.ac.kr</a>
+                    </div>
+                </div>
             </div>
         </div>
 
