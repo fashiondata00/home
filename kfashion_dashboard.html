@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K-패션·뷰티 글로벌 트렌드 — Fashion Marketing Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;500;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#0d0d0d;
+  --dark:#141414;
+  --card:#1a1a1a;
+  --card2:#222;
+  --border:#2a2a2a;
+  --yellow:#f5c800;
+  --yellow-dim:#c8a200;
+  --white:#ffffff;
+  --gray:#aaaaaa;
+  --gray2:#666;
+}
+body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;font-weight:300;min-height:100vh}
+a{color:inherit;text-decoration:none}
+
+/* ─── HEADER ─── */
+.hdr{
+  border-bottom:1px solid var(--border);
+  padding:0 40px;
+  display:flex;align-items:center;justify-content:space-between;
+  height:60px;position:sticky;top:0;z-index:100;
+  background:rgba(13,13,13,.95);backdrop-filter:blur(10px);
+}
+.hdr-logo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.08em;color:var(--yellow)}
+.hdr-nav{display:flex;gap:32px}
+.hdr-nav a{font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--gray);font-weight:500;transition:color .2s}
+.hdr-nav a:hover,.hdr-nav a.active{color:var(--yellow)}
+
+/* ─── HERO ─── */
+.hero{
+  padding:60px 40px 50px;
+  border-bottom:1px solid var(--border);
+}
+.hero-eyebrow{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--yellow);font-weight:600;margin-bottom:14px;
+}
+.hero-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(48px,7vw,88px);
+  line-height:.92;letter-spacing:.03em;
+  color:var(--white);margin-bottom:16px;
+}
+.hero-title span{color:var(--yellow)}
+.hero-sub{
+  font-family:'Barlow',sans-serif;font-size:15px;font-weight:300;
+  color:var(--gray);max-width:520px;line-height:1.6;
+}
+
+/* ─── CONTROLS ─── */
+.controls{
+  padding:24px 40px;
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  border-bottom:1px solid var(--border);
+  background:var(--dark);
+}
+.ctrl-label{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--gray2);font-weight:600;margin-right:4px;
+}
+.tog-wrap{display:flex;border:1px solid var(--border);border-radius:2px;overflow:hidden}
+.tog-btn{
+  padding:8px 20px;
+  font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;
+  border:none;cursor:pointer;transition:background .2s,color .2s;
+  background:transparent;color:var(--gray);
+}
+.tog-btn.on{background:var(--yellow);color:var(--black)}
+.yr-select{
+  appearance:none;
+  padding:8px 32px 8px 14px;
+  font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;
+  background:var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23aaa'/%3E%3C/svg%3E") no-repeat right 12px center;
+  border:1px solid var(--border);color:var(--white);cursor:pointer;border-radius:2px;
+}
+.yr-select:focus{outline:1px solid var(--yellow)}
+
+/* ─── TABS ─── */
+.tab-bar{
+  padding:0 40px;
+  border-bottom:1px solid var(--border);
+  display:flex;gap:0;background:var(--dark);
+}
+.tab-btn{
+  padding:16px 28px;
+  font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;
+  letter-spacing:.15em;text-transform:uppercase;
+  border:none;cursor:pointer;background:transparent;
+  color:var(--gray);border-bottom:2px solid transparent;
+  transition:color .2s,border-color .2s;margin-bottom:-1px;
+}
+.tab-btn:hover{color:var(--white)}
+.tab-btn.on{color:var(--yellow);border-bottom-color:var(--yellow)}
+
+/* ─── CONTENT AREA ─── */
+.content{padding:40px;max-width:1400px}
+
+/* ─── SECTION HEADER ─── */
+.sec-head{margin-bottom:28px}
+.sec-eyebrow{
+  font-family:'Barlow Condensed',sans-serif;font-size:11px;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--yellow);
+  font-weight:600;margin-bottom:8px;
+}
+.sec-title{
+  font-family:'Bebas Neue',sans-serif;font-size:32px;
+  letter-spacing:.05em;color:var(--white);
+}
+
+/* ─── KPI CARDS ─── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2px;margin-bottom:40px}
+.kpi-card{
+  background:var(--card);
+  padding:24px 24px 20px;
+  border-top:2px solid var(--yellow);
+  position:relative;
+}
+.kpi-nation{
+  font-family:'Bebas Neue',sans-serif;font-size:20px;
+  letter-spacing:.08em;color:var(--yellow);margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;
+}
+.kpi-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.kpi-row:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.kpi-lbl{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);font-weight:600}
+.kpi-val{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.05em;color:var(--white)}
+.kpi-unit{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--gray);margin-left:2px}
+.kpi-badge{
+  font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:.08em;background:var(--yellow);color:var(--black);
+  padding:2px 8px;border-radius:1px;
+}
+
+/* ─── CHART SECTIONS ─── */
+.chart-wrap{
+  background:var(--card);
+  padding:28px;
+  border-top:2px solid var(--border);
+  margin-bottom:2px;
+}
+.chart-wrap.accent{border-top-color:var(--yellow)}
+.chart-head{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;margin-bottom:20px;
+}
+.chart-title{
+  font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.05em;color:var(--white);
+}
+.chart-sub{font-family:'Barlow',sans-serif;font-size:12px;color:var(--gray);margin-top:2px}
+.legend{display:flex;flex-wrap:wrap;gap:12px}
+.leg-item{display:flex;align-items:center;gap:6px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:.06em;color:var(--gray)}
+.leg-dot{width:12px;height:12px;border-radius:1px;flex-shrink:0}
+canvas-wrap{position:relative;width:100%}
+
+/* ─── TRENDS GRID ─── */
+.trend-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2px}
+
+/* ─── FOOTER ─── */
+.ftr{
+  margin-top:80px;padding:32px 40px;
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:16px;
+}
+.ftr-logo{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.08em;color:var(--yellow)}
+.ftr-text{font-family:'Barlow',sans-serif;font-size:12px;color:var(--gray2)}
+
+/* ─── UTIL ─── */
+.hidden{display:none!important}
+.panel{}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-logo">Fashiondata00Lab</div>
+  <nav class="hdr-nav">
+    <a href="https://www.fashiondata00.com/index.html">Home</a>
+    <a href="https://www.fashiondata00.com/research.html">Research</a>
+    <a href="https://www.fashiondata00.com/activities.html">Activities</a>
+    <a href="https://www.fashiondata00.com/curriculum.html" class="active">Curriculum</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">KOFICE 한류 소비자 조사 2021–2025</div>
+  <h1 class="hero-title">K-<span>Fashion</span>·<span>Beauty</span><br>Global Trends</h1>
+  <p class="hero-sub">베트남·인도네시아·일본·중국 4개국 소비자의 접촉경로, 인기요인, 호감도·소비 데이터 탐색.</p>
+</section>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <span class="ctrl-label">분야</span>
+  <div class="tog-wrap">
+    <button class="tog-btn on" id="btn-f" onclick="setBunya('패션')">패션</button>
+    <button class="tog-btn" id="btn-b" onclick="setBunya('뷰티')">뷰티</button>
+  </div>
+  <span class="ctrl-label" style="margin-left:16px">연도</span>
+  <select class="yr-select" id="yr-sel" onchange="setYear(+this.value)">
+    <option>2021</option><option>2022</option><option>2023</option><option>2024</option><option selected>2025</option>
+  </select>
+</div>
+
+<!-- TAB BAR -->
+<div class="tab-bar" id="tab-bar"></div>
+
+<!-- PANELS -->
+<div class="content" id="p-overview">
+  <div class="sec-head">
+    <div class="sec-eyebrow">Consumer Metrics</div>
+    <div class="sec-title">국가별 핵심 지표</div>
+  </div>
+  <div class="kpi-grid" id="kpi-grid"></div>
+</div>
+
+<div class="content hidden" id="p-channels">
+  <div class="chart-wrap accent">
+    <div class="chart-head">
+      <div>
+        <div class="chart-title">접촉경로별 선택률</div>
+        <div class="chart-sub">Contact Channel Selection Rate (%)</div>
+      </div>
+      <div class="legend" id="leg-ch"></div>
+    </div>
+    <div style="position:relative;height:320px"><canvas id="c-ch" aria-label="국가별 접촉경로 선택률 막대그래프">접촉경로 데이터</canvas></div>
+  </div>
+</div>
+
+<div class="content hidden" id="p-factors">
+  <div class="chart-wrap accent">
+    <div class="chart-head">
+      <div>
+        <div class="chart-title">인기요인별 응답 비율</div>
+        <div class="chart-sub">Popularity Factor Response Rate (%)</div>
+      </div>
+      <div class="legend" id="leg-pf"></div>
+    </div>
+    <div id="pf-wrap" style="position:relative;height:420px"><canvas id="c-pf" aria-label="국가별 인기요인 수평 막대그래프">인기요인 데이터</canvas></div>
+  </div>
+</div>
+
+<div class="content hidden" id="p-trends">
+  <div class="trend-grid">
+    <div class="chart-wrap accent">
+      <div class="chart-head">
+        <div>
+          <div class="chart-title">호감도 추이</div>
+          <div class="chart-sub">Brand Favorability (5pt scale)</div>
+        </div>
+        <div class="legend" id="leg-t1"></div>
+      </div>
+      <div style="position:relative;height:240px"><canvas id="c-t1" aria-label="호감도 추이 선 그래프">호감도 추이</canvas></div>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-head">
+        <div>
+          <div class="chart-title">소비비중 추이</div>
+          <div class="chart-sub">Consumption Share (%)</div>
+        </div>
+        <div class="legend" id="leg-t2"></div>
+      </div>
+      <div style="position:relative;height:240px"><canvas id="c-t2" aria-label="소비비중 추이 선 그래프">소비비중 추이</canvas></div>
+    </div>
+    <div class="chart-wrap" style="grid-column:1/-1">
+      <div class="chart-head">
+        <div>
+          <div class="chart-title">동영상 시청 빈도 추이</div>
+          <div class="chart-sub">Video Content Viewing Frequency (5pt scale)</div>
+        </div>
+        <div class="legend" id="leg-t3"></div>
+      </div>
+      <div style="position:relative;height:220px"><canvas id="c-t3" aria-label="동영상빈도 추이 선 그래프">동영상빈도 추이</canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="ftr">
+  <div class="ftr-logo">Fashion Marketing Data Lab</div>
+  <div class="ftr-text">Department of Fashion Industry · Incheon National University<br>119 Academy-ro, Yeonsu-gu, Incheon, Republic of Korea</div>
+  <div class="ftr-text">© 2025 Fashion Marketing Lab. All rights reserved.</div>
+</footer>
+
+<script>
+const NATIONS=['베트남','인도네시아','일본','중국'];
+const YEARS=[2021,2022,2023,2024,2025];
+const FLAGS={'베트남':'🇻🇳','인도네시아':'🇮🇩','일본':'🇯🇵','중국':'🇨🇳'};
+const COL={'베트남':'#f5c800','인도네시아':'#ff6b35','일본':'#4da6ff','중국':'#ff4d6d'};
+const DASH={'베트남':[],'인도네시아':[6,3],'일본':[2,3],'중국':[10,4,2,4]};
+
+const CH={"패션":{"2021":{"베트남":{"SNS":43.4,"드라마·예능":43.4,"개인영상":24.0,"온오프라인매장":0.0,"전시회":25.6,"책·잡지":0.0},"인도네시아":{"SNS":42.4,"드라마·예능":41.6,"개인영상":30.0,"온오프라인매장":0.0,"전시회":17.8,"책·잡지":0.0},"일본":{"SNS":19.4,"드라마·예능":11.8,"개인영상":8.8,"온오프라인매장":0.0,"전시회":6.0,"책·잡지":0.0},"중국":{"SNS":30.0,"드라마·예능":37.8,"개인영상":6.2,"온오프라인매장":0.0,"전시회":15.4,"책·잡지":0.0}},"2022":{"베트남":{"SNS":40.2,"드라마·예능":40.4,"개인영상":23.8,"온오프라인매장":0.0,"전시회":22.2,"책·잡지":0.0},"인도네시아":{"SNS":40.2,"드라마·예능":39.4,"개인영상":30.6,"온오프라인매장":0.0,"전시회":15.6,"책·잡지":0.0},"일본":{"SNS":23.4,"드라마·예능":12.8,"개인영상":11.0,"온오프라인매장":0.0,"전시회":5.8,"책·잡지":0.0},"중국":{"SNS":35.7,"드라마·예능":38.7,"개인영상":7.3,"온오프라인매장":0.0,"전시회":20.7,"책·잡지":0.0}},"2023":{"베트남":{"SNS":33.7,"드라마·예능":31.3,"개인영상":17.7,"온오프라인매장":0.0,"전시회":20.2,"책·잡지":0.0},"인도네시아":{"SNS":42.1,"드라마·예능":37.5,"개인영상":29.8,"온오프라인매장":0.0,"전시회":18.0,"책·잡지":0.0},"일본":{"SNS":22.4,"드라마·예능":12.6,"개인영상":9.8,"온오프라인매장":0.0,"전시회":5.3,"책·잡지":0.0},"중국":{"SNS":34.2,"드라마·예능":35.2,"개인영상":7.2,"온오프라인매장":0.0,"전시회":19.4,"책·잡지":0.0}},"2024":{"베트남":{"SNS":41.4,"드라마·예능":37.9,"개인영상":30.7,"온오프라인매장":20.8,"전시회":21.6,"책·잡지":0.0},"인도네시아":{"SNS":42.2,"드라마·예능":37.1,"개인영상":31.8,"온오프라인매장":19.0,"전시회":17.6,"책·잡지":0.0},"일본":{"SNS":21.1,"드라마·예능":11.3,"개인영상":11.5,"온오프라인매장":10.4,"전시회":4.2,"책·잡지":0.0},"중국":{"SNS":30.1,"드라마·예능":32.2,"개인영상":11.0,"온오프라인매장":10.8,"전시회":17.1,"책·잡지":0.0}},"2025":{"베트남":{"SNS":39.1,"드라마·예능":31.7,"개인영상":30.8,"온오프라인매장":29.0,"전시회":19.9,"책·잡지":23.6},"인도네시아":{"SNS":31.8,"드라마·예능":30.5,"개인영상":27.8,"온오프라인매장":22.4,"전시회":14.2,"책·잡지":16.3},"일본":{"SNS":15.6,"드라마·예능":8.0,"개인영상":8.1,"온오프라인매장":15.6,"전시회":4.2,"책·잡지":6.4},"중국":{"SNS":28.0,"드라마·예능":29.7,"개인영상":9.0,"온오프라인매장":21.0,"전시회":16.5,"책·잡지":23.0}}},"뷰티":{"2021":{"베트남":{"SNS":42.4,"드라마·예능":38.8,"개인영상":21.8,"온오프라인매장":0.0,"전시회":23.4,"책·잡지":0.0},"인도네시아":{"SNS":39.8,"드라마·예능":38.8,"개인영상":33.6,"온오프라인매장":0.0,"전시회":19.4,"책·잡지":0.0},"일본":{"SNS":22.0,"드라마·예능":9.2,"개인영상":13.2,"온오프라인매장":0.0,"전시회":5.2,"책·잡지":0.0},"중국":{"SNS":32.8,"드라마·예능":34.0,"개인영상":8.0,"온오프라인매장":0.0,"전시회":17.0,"책·잡지":0.0}},"2022":{"베트남":{"SNS":42.2,"드라마·예능":39.0,"개인영상":23.4,"온오프라인매장":0.0,"전시회":21.8,"책·잡지":0.0},"인도네시아":{"SNS":35.4,"드라마·예능":31.2,"개인영상":31.4,"온오프라인매장":0.0,"전시회":14.2,"책·잡지":0.0},"일본":{"SNS":26.8,"드라마·예능":10.8,"개인영상":13.6,"온오프라인매장":0.0,"전시회":7.2,"책·잡지":0.0},"중국":{"SNS":38.5,"드라마·예능":34.0,"개인영상":9.5,"온오프라인매장":0.0,"전시회":21.8,"책·잡지":0.0}},"2023":{"베트남":{"SNS":37.9,"드라마·예능":32.2,"개인영상":19.6,"온오프라인매장":0.0,"전시회":20.0,"책·잡지":0.0},"인도네시아":{"SNS":39.0,"드라마·예능":29.9,"개인영상":32.3,"온오프라인매장":0.0,"전시회":15.5,"책·잡지":0.0},"일본":{"SNS":27.4,"드라마·예능":9.8,"개인영상":12.5,"온오프라인매장":0.0,"전시회":4.8,"책·잡지":0.0},"중국":{"SNS":34.4,"드라마·예능":33.2,"개인영상":6.8,"온오프라인매장":0.0,"전시회":19.7,"책·잡지":0.0}},"2024":{"베트남":{"SNS":42.8,"드라마·예능":34.7,"개인영상":30.6,"온오프라인매장":24.2,"전시회":23.9,"책·잡지":0.0},"인도네시아":{"SNS":38.8,"드라마·예능":29.1,"개인영상":30.5,"온오프라인매장":18.1,"전시회":15.8,"책·잡지":0.0},"일본":{"SNS":24.4,"드라마·예능":7.6,"개인영상":15.8,"온오프라인매장":9.9,"전시회":5.2,"책·잡지":0.0},"중국":{"SNS":28.6,"드라마·예능":26.2,"개인영상":10.3,"온오프라인매장":16.9,"전시회":16.8,"책·잡지":0.0}},"2025":{"베트남":{"SNS":38.4,"드라마·예능":25.8,"개인영상":28.2,"온오프라인매장":31.2,"전시회":15.9,"책·잡지":22.1},"인도네시아":{"SNS":34.5,"드라마·예능":26.2,"개인영상":30.0,"온오프라인매장":24.5,"전시회":12.8,"책·잡지":13.5},"일본":{"SNS":16.2,"드라마·예능":6.1,"개인영상":11.0,"온오프라인매장":16.2,"전시회":4.9,"책·잡지":6.7},"중국":{"SNS":18.0,"드라마·예능":15.0,"개인영상":6.5,"온오프라인매장":17.1,"전시회":12.0,"책·잡지":14.1}}}};
+
+const PF={"패션":{"2021":{"베트남":{"디자인":19.3,"다양성":23.0,"품질":14.4,"한류스타":10.0,"가격":4.1,"인플루언서":9.6,"평판":13.7,"브랜드":5.6},"인도네시아":{"디자인":23.1,"다양성":19.5,"품질":19.5,"한류스타":11.2,"가격":7.2,"인플루언서":9.2,"평판":4.8,"브랜드":5.6},"일본":{"디자인":24.3,"다양성":8.6,"품질":5.0,"한류스타":11.4,"가격":32.1,"인플루언서":5.7,"평판":5.7,"브랜드":5.7},"중국":{"디자인":12.6,"다양성":18.9,"품질":15.5,"한류스타":16.8,"가격":10.9,"인플루언서":7.1,"평판":7.6,"브랜드":10.5}},"2022":{"베트남":{"디자인":23.2,"다양성":18.7,"품질":19.1,"한류스타":13.3,"가격":5.8,"인플루언서":7.5,"평판":7.9,"브랜드":4.6},"인도네시아":{"디자인":25.8,"다양성":17.8,"품질":16.5,"한류스타":13.1,"가격":8.1,"인플루언서":9.3,"평판":5.1,"브랜드":4.2},"일본":{"디자인":31.3,"다양성":6.7,"품질":4.9,"한류스타":12.9,"가격":25.2,"인플루언서":8.0,"평판":6.7,"브랜드":3.7},"중국":{"디자인":15.4,"다양성":17.4,"품질":14.1,"한류스타":11.5,"가격":10.2,"인플루언서":10.8,"평판":10.2,"브랜드":10.2}},"2023":{"베트남":{"디자인":24.9,"다양성":18.3,"품질":14.1,"한류스타":11.8,"가격":6.5,"인플루언서":7.9,"평판":10.7,"브랜드":5.8},"인도네시아":{"디자인":27.1,"다양성":21.7,"품질":12.0,"한류스타":16.4,"가격":6.1,"인플루언서":9.0,"평판":4.4,"브랜드":2.8},"일본":{"디자인":34.5,"다양성":9.4,"품질":2.0,"한류스타":8.0,"가격":30.5,"인플루언서":6.6,"평판":4.8,"브랜드":3.7},"중국":{"디자인":17.8,"다양성":17.6,"품질":14.6,"한류스타":16.2,"가격":8.7,"인플루언서":8.9,"평판":7.8,"브랜드":8.0}},"2024":{"베트남":{"디자인":30.1,"다양성":15.2,"품질":11.4,"한류스타":11.9,"가격":8.3,"인플루언서":6.4,"평판":8.7,"브랜드":7.9},"인도네시아":{"디자인":32.7,"다양성":23.4,"품질":14.5,"한류스타":8.5,"가격":4.6,"인플루언서":7.3,"평판":3.2,"브랜드":5.3},"일본":{"디자인":33.9,"다양성":12.2,"품질":4.7,"한류스타":11.3,"가격":18.2,"인플루언서":5.3,"평판":6.0,"브랜드":7.2},"중국":{"디자인":25.4,"다양성":21.1,"품질":12.7,"한류스타":12.3,"가격":7.8,"인플루언서":7.5,"평판":7.7,"브랜드":5.3}},"2025":{"베트남":{"디자인":26.4,"다양성":14.5,"품질":12.5,"한류스타":12.1,"가격":11.0,"인플루언서":8.4,"평판":8.4,"브랜드":6.8},"인도네시아":{"디자인":29.7,"다양성":16.5,"품질":18.8,"한류스타":11.4,"가격":6.9,"인플루언서":7.6,"평판":4.0,"브랜드":5.1},"일본":{"디자인":34.7,"다양성":9.2,"품질":3.6,"한류스타":9.2,"가격":19.1,"인플루언서":8.9,"평판":6.6,"브랜드":7.6},"중국":{"디자인":25.3,"다양성":14.9,"품질":10.8,"한류스타":13.6,"가격":9.0,"인플루언서":10.3,"평판":7.4,"브랜드":8.3}}},"뷰티":{"2021":{"베트남":{"효과·품질":34.9,"평판":14.1,"다양성":10.4,"한류스타":8.6,"가격":7.1,"친환경성분":6.3,"인플루언서":5.9,"브랜드":5.6,"패키지디자인":7.1},"인도네시아":{"효과·품질":27.5,"평판":11.5,"다양성":13.9,"한류스타":11.1,"가격":6.1,"친환경성분":10.7,"인플루언서":7.8,"브랜드":4.9,"패키지디자인":6.6},"일본":{"효과·품질":15.7,"평판":3.1,"다양성":10.7,"한류스타":10.1,"가격":32.1,"친환경성분":4.4,"인플루언서":10.1,"브랜드":7.5,"패키지디자인":5.0},"중국":{"효과·품질":25.1,"평판":11.7,"다양성":12.6,"한류스타":12.6,"가격":10.1,"친환경성분":10.1,"인플루언서":6.9,"브랜드":6.1,"패키지디자인":4.9}},"2022":{"베트남":{"효과·품질":33.1,"평판":11.2,"다양성":11.2,"한류스타":11.2,"가격":5.8,"친환경성분":9.6,"인플루언서":6.9,"브랜드":5.4,"패키지디자인":5.8},"인도네시아":{"효과·품질":34.1,"평판":9.0,"다양성":13.5,"한류스타":11.2,"가격":4.9,"친환경성분":8.1,"인플루언서":8.5,"브랜드":4.0,"패키지디자인":6.3},"일본":{"효과·품질":24.4,"평판":13.3,"다양성":7.2,"한류스타":6.7,"가격":23.9,"친환경성분":7.8,"인플루언서":6.1,"브랜드":4.4,"패키지디자인":5.0},"중국":{"효과·품질":26.7,"평판":9.3,"다양성":11.3,"한류스타":13.5,"가격":10.3,"친환경성분":9.3,"인플루언서":8.4,"브랜드":4.8,"패키지디자인":6.1}},"2023":{"베트남":{"효과·품질":30.0,"평판":15.5,"다양성":14.3,"한류스타":5.5,"가격":7.3,"친환경성분":9.8,"인플루언서":5.9,"브랜드":6.4,"패키지디자인":5.5},"인도네시아":{"효과·품질":33.0,"평판":11.3,"다양성":7.9,"한류스타":11.5,"가격":5.8,"친환경성분":10.6,"인플루언서":12.1,"브랜드":4.0,"패키지디자인":3.8},"일본":{"효과·품질":24.2,"평판":10.4,"다양성":7.5,"한류스타":7.3,"가격":25.4,"친환경성분":4.8,"인플루언서":10.9,"브랜드":2.9,"패키지디자인":5.8},"중국":{"효과·품질":30.5,"평판":11.1,"다양성":9.4,"한류스타":9.4,"가격":12.6,"친환경성분":7.5,"인플루언서":6.3,"브랜드":7.8,"패키지디자인":5.1}},"2024":{"베트남":{"효과·품질":33.2,"평판":12.6,"다양성":14.6,"한류스타":8.1,"가격":6.9,"친환경성분":8.9,"인플루언서":5.1,"브랜드":4.3,"패키지디자인":6.1},"인도네시아":{"효과·품질":39.4,"평판":8.5,"다양성":9.2,"한류스타":8.0,"가격":7.1,"친환경성분":8.7,"인플루언서":6.2,"브랜드":4.0,"패키지디자인":8.8},"일본":{"효과·품질":31.8,"평판":11.7,"다양성":9.5,"한류스타":4.3,"가격":17.1,"친환경성분":4.9,"인플루언서":5.2,"브랜드":6.2,"패키지디자인":8.2},"중국":{"효과·품질":31.3,"평판":9.4,"다양성":12.1,"한류스타":13.3,"가격":9.0,"친환경성분":6.2,"인플루언서":6.6,"브랜드":6.2,"패키지디자인":5.9}},"2025":{"베트남":{"효과·품질":25.8,"평판":11.9,"다양성":11.5,"한류스타":10.9,"가격":9.8,"친환경성분":9.4,"인플루언서":8.2,"브랜드":7.8,"패키지디자인":4.8},"인도네시아":{"효과·품질":33.9,"평판":12.4,"다양성":8.0,"한류스타":9.3,"가격":7.7,"친환경성분":10.4,"인플루언서":6.7,"브랜드":7.3,"패키지디자인":4.2},"일본":{"효과·품질":25.6,"평판":7.1,"다양성":11.0,"한류스타":8.0,"가격":19.6,"친환경성분":7.1,"인플루언서":8.3,"브랜드":6.5,"패키지디자인":5.4},"중국":{"효과·품질":24.8,"평판":8.3,"다양성":9.6,"한류스타":13.4,"가격":11.7,"친환경성분":8.3,"인플루언서":10.0,"브랜드":8.9,"패키지디자인":4.9}}}};
+
+const MT={"패션":{"호감도":{"베트남":{"2021":4.15,"2022":4.34,"2023":4.16,"2024":4.17,"2025":4.13},"인도네시아":{"2021":4.26,"2022":4.21,"2023":4.15,"2024":4.12,"2025":4.19},"일본":{"2021":3.63,"2022":3.71,"2023":3.5,"2024":3.69,"2025":3.63},"중국":{"2021":4.08,"2022":4.0,"2023":4.04,"2024":3.88,"2025":3.93}},"소비비중(%)":{"베트남":{"2021":31.16,"2022":35.52,"2023":36.45,"2024":36.65,"2025":34.68},"인도네시아":{"2021":30.24,"2022":33.5,"2023":35.73,"2024":36.06,"2025":34.11},"일본":{"2021":20.5,"2022":23.1,"2023":18.97,"2024":23.41,"2025":18.77},"중국":{"2021":25.81,"2022":26.98,"2023":27.18,"2024":23.01,"2025":24.17}},"동영상빈도":{"베트남":{"2021":3.57,"2022":3.6,"2023":3.74,"2024":3.86,"2025":3.9},"인도네시아":{"2021":3.5,"2022":3.35,"2023":3.38,"2024":3.47,"2025":3.75},"일본":{"2021":2.56,"2022":2.54,"2023":2.4,"2024":2.92,"2025":3.04},"중국":{"2021":3.52,"2022":3.44,"2023":3.55,"2024":3.42,"2025":3.57}}},"뷰티":{"호감도":{"베트남":{"2021":4.17,"2022":4.35,"2023":4.2,"2024":4.17,"2025":4.22},"인도네시아":{"2021":4.26,"2022":4.16,"2023":4.15,"2024":4.14,"2025":4.15},"일본":{"2021":3.56,"2022":3.77,"2023":3.62,"2024":3.68,"2025":3.71},"중국":{"2021":3.98,"2022":4.03,"2023":3.98,"2024":3.88,"2025":4.09}},"소비비중(%)":{"베트남":{"2021":39.96,"2022":42.17,"2023":41.18,"2024":38.72,"2025":39.05},"인도네시아":{"2021":34.64,"2022":36.57,"2023":36.81,"2024":37.97,"2025":34.57},"일본":{"2021":16.41,"2022":25.51,"2023":22.86,"2024":26.18,"2025":25.46},"중국":{"2021":28.76,"2022":33.08,"2023":30.81,"2024":28.36,"2025":28.47}},"동영상빈도":{"베트남":{"2021":3.61,"2022":3.68,"2023":3.81,"2024":3.73,"2025":3.9},"인도네시아":{"2021":3.7,"2022":3.43,"2023":3.46,"2024":3.57,"2025":3.66},"일본":{"2021":2.53,"2022":2.63,"2023":2.4,"2024":2.72,"2025":3.01},"중국":{"2021":3.43,"2022":3.51,"2023":3.42,"2024":3.32,"2025":3.78}}}};
+
+// ── Chart.js global defaults for dark theme
+Chart.defaults.color='#aaaaaa';
+Chart.defaults.borderColor='#2a2a2a';
+Chart.defaults.font.family="'Barlow Condensed',sans-serif";
+Chart.defaults.font.size=12;
+
+let curYear=2025,curBunya='패션',activeTab='overview';
+const chartInst={};
+
+// ── TABS
+const TABS=[{id:'overview',label:'개요'},{id:'channels',label:'접촉경로'},{id:'factors',label:'인기요인'},{id:'trends',label:'트렌드'}];
+const bar=document.getElementById('tab-bar');
+TABS.forEach(t=>{
+  const b=document.createElement('button');
+  b.className='tab-btn'+(t.id==='overview'?' on':'');
+  b.textContent=t.label;b.dataset.tab=t.id;
+  b.onclick=()=>showTab(t.id);
+  bar.appendChild(b);
+});
+
+function showTab(id){
+  activeTab=id;
+  TABS.forEach(t=>{
+    document.getElementById('p-'+t.id).classList.toggle('hidden',t.id!==id);
+    document.querySelector(`.tab-btn[data-tab="${t.id}"]`).classList.toggle('on',t.id===id);
+  });
+  if(id==='overview')renderKPI();
+  else if(id==='channels')renderChannels();
+  else if(id==='factors')renderFactors();
+  else if(id==='trends')renderTrends();
+}
+
+function setBunya(b){
+  curBunya=b;
+  document.getElementById('btn-f').className='tog-btn'+(b==='패션'?' on':'');
+  document.getElementById('btn-b').className='tog-btn'+(b==='뷰티'?' on':'');
+  showTab(activeTab);
+}
+function setYear(y){curYear=y;showTab(activeTab);}
+
+function mkLegend(el){
+  el.innerHTML='';
+  NATIONS.forEach(n=>{
+    const s=document.createElement('span');
+    s.className='leg-item';
+    s.innerHTML=`<span class="leg-dot" style="background:${COL[n]}"></span>${n}`;
+    el.appendChild(s);
+  });
+}
+
+// ── KPI
+function renderKPI(){
+  const g=document.getElementById('kpi-grid');g.innerHTML='';
+  const m=MT[curBunya],chd=CH[curBunya][curYear];
+  NATIONS.forEach(n=>{
+    const hg=m['호감도'][n][curYear];
+    const sp=m['소비비중(%)'][n][curYear];
+    const vf=m['동영상빈도'][n][curYear];
+    const top=Object.entries(chd[n]).filter(e=>e[1]>0).sort((a,b)=>b[1]-a[1])[0];
+    const d=document.createElement('div');
+    d.className='kpi-card';
+    d.innerHTML=`
+      <div class="kpi-nation" style="color:${COL[n]}">${FLAGS[n]} ${n}</div>
+      <div class="kpi-row">
+        <span class="kpi-lbl">호감도</span>
+        <span><span class="kpi-val">${hg.toFixed(2)}</span><span class="kpi-unit">/ 5pt</span></span>
+      </div>
+      <div class="kpi-row">
+        <span class="kpi-lbl">소비비중</span>
+        <span><span class="kpi-val">${sp.toFixed(1)}</span><span class="kpi-unit">%</span></span>
+      </div>
+      <div class="kpi-row">
+        <span class="kpi-lbl">동영상빈도</span>
+        <span><span class="kpi-val">${vf.toFixed(2)}</span><span class="kpi-unit">/ 5pt</span></span>
+      </div>
+      <div class="kpi-row" style="margin-top:4px">
+        <span class="kpi-lbl">주요 채널</span>
+        <span class="kpi-badge">${top[0]} ${top[1].toFixed(0)}%</span>
+      </div>`;
+    g.appendChild(d);
+  });
+}
+
+// ── CHANNELS
+function renderChannels(){
+  const channels=['SNS','드라마·예능','개인영상','온오프라인매장','전시회','책·잡지'];
+  const data=CH[curBunya][curYear];
+  mkLegend(document.getElementById('leg-ch'));
+  const datasets=NATIONS.map(n=>({
+    label:n,
+    data:channels.map(c=>data[n][c]||0),
+    backgroundColor:COL[n]+'bb',
+    borderColor:COL[n],
+    borderWidth:1,
+  }));
+  if(chartInst.ch)chartInst.ch.destroy();
+  chartInst.ch=new Chart(document.getElementById('c-ch'),{
+    type:'bar',
+    data:{labels:channels,datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y.toFixed(1)}%`}}},
+      scales:{
+        x:{ticks:{color:'#aaa',font:{family:"'Barlow Condensed',sans-serif",size:12}},grid:{color:'#2a2a2a'}},
+        y:{min:0,max:55,ticks:{color:'#aaa',callback:v=>v+'%'},grid:{color:'#2a2a2a'}}
+      }
+    }
+  });
+}
+
+// ── FACTORS
+function renderFactors(){
+  const b=curBunya;
+  const factors=b==='패션'
+    ?['디자인','다양성','품질','한류스타','가격','인플루언서','평판','브랜드']
+    :['효과·품질','평판','다양성','한류스타','가격','친환경성분','인플루언서','브랜드','패키지디자인'];
+  mkLegend(document.getElementById('leg-pf'));
+  const data=PF[b][curYear];
+  const datasets=NATIONS.map(n=>({
+    label:n,data:factors.map(f=>data[n][f]||0),
+    backgroundColor:COL[n]+'bb',borderColor:COL[n],borderWidth:1
+  }));
+  const h=(factors.length*50+80);
+  document.getElementById('pf-wrap').style.height=h+'px';
+  if(chartInst.pf)chartInst.pf.destroy();
+  chartInst.pf=new Chart(document.getElementById('c-pf'),{
+    type:'bar',
+    data:{labels:factors,datasets},
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.x.toFixed(1)}%`}}},
+      scales:{
+        x:{min:0,ticks:{color:'#aaa',callback:v=>v+'%'},grid:{color:'#2a2a2a'}},
+        y:{ticks:{color:'#aaa',font:{family:"'Barlow Condensed',sans-serif",size:13}},grid:{display:false}}
+      }
+    }
+  });
+}
+
+// ── TRENDS
+function mkLineSets(metric){
+  return NATIONS.map(n=>({
+    label:n,
+    data:YEARS.map(y=>MT[curBunya][metric][n][y]),
+    borderColor:COL[n],
+    backgroundColor:'transparent',
+    borderDash:DASH[n],
+    tension:.35,pointRadius:4,pointHoverRadius:6,
+    pointBackgroundColor:COL[n],pointBorderColor:'#0d0d0d',pointBorderWidth:2
+  }));
+}
+function mkTrendOpts(min,max,suffix){
+  return{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y.toFixed(2)}${suffix}`}}},
+    scales:{
+      x:{ticks:{color:'#aaa'},grid:{color:'#2a2a2a'}},
+      y:{min,max,ticks:{color:'#aaa',callback:v=>v+suffix},grid:{color:'#2a2a2a'}}
+    }
+  };
+}
+function renderTrends(){
+  ['t1','t2','t3'].forEach(k=>{if(chartInst[k])chartInst[k].destroy();});
+  ['leg-t1','leg-t2','leg-t3'].forEach(id=>mkLegend(document.getElementById(id)));
+  chartInst.t1=new Chart(document.getElementById('c-t1'),{type:'line',data:{labels:YEARS,datasets:mkLineSets('호감도')},options:mkTrendOpts(2.5,5,'')});
+  chartInst.t2=new Chart(document.getElementById('c-t2'),{type:'line',data:{labels:YEARS,datasets:mkLineSets('소비비중(%)')},options:mkTrendOpts(10,50,'%')});
+  chartInst.t3=new Chart(document.getElementById('c-t3'),{type:'line',data:{labels:YEARS,datasets:mkLineSets('동영상빈도')},options:mkTrendOpts(2.0,4.5,'')});
+}
+
+renderKPI();
+</script>
+</body>
+</html>
