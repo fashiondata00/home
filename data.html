@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DATA — Fashion Marketing Lab</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #1a1a1a;
+    --black: #000000;
+    --panel: #0b0b0b;
+    --panel-2: #121212;
+    --yellow: #FFD600;
+    --text: #ffffff;
+    --muted: rgba(255,255,255,0.62);
+    --muted-2: rgba(255,255,255,0.38);
+    --line: rgba(255,214,0,0.14);
+    --line-strong: rgba(255,214,0,0.36);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  a { color: inherit; }
+
+  /* NAV — index.html과 동일 톤 */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    padding: 1.5rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(26,26,26,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,214,0,0.1);
+  }
+
+  .logo {
+    font-size: 1.8rem;
+    font-weight: 900;
+    letter-spacing: -1px;
+    color: var(--yellow);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+    align-items: center;
+  }
+
+  .nav-links a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: color 0.3s;
+    position: relative;
+  }
+
+  .nav-links a:hover { color: var(--yellow); }
+
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--yellow);
+    transition: width 0.3s;
+  }
+
+  .nav-links a:hover::after { width: 100%; }
+
+  .nav-links a.nav-data {
+    color: var(--yellow);
+    border: 1px solid rgba(255,214,0,0.4);
+    padding: 4px 14px;
+    border-radius: 2px;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+  }
+
+  .nav-links a.nav-data:hover {
+    background: var(--yellow);
+    color: #000;
+  }
+
+  .nav-links a.nav-data::after { display: none; }
+
+  /* HERO */
+  .hero {
+    min-height: 88vh;
+    padding: 10rem 4rem 6rem;
+    background: #000;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 620px;
+    height: 620px;
+    right: -220px;
+    top: 70px;
+    border: 1px solid rgba(255,214,0,0.18);
+    border-radius: 50%;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    width: 380px;
+    height: 380px;
+    right: -60px;
+    top: 190px;
+    border: 1px solid rgba(255,214,0,0.08);
+    border-radius: 50%;
+  }
+
+  .hero-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  .section-label {
+    color: var(--yellow);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+
+  .hero h1 {
+    font-size: clamp(4rem, 9vw, 8.5rem);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -5px;
+    color: var(--yellow);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+
+  .hero-copy {
+    max-width: 760px;
+    font-size: 1.2rem;
+    line-height: 1.85;
+    color: rgba(255,255,255,0.72);
+  }
+
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .hero-meta-item {
+    border-left: 2px solid var(--yellow);
+    padding-left: 0.9rem;
+  }
+
+  .hero-meta-num {
+    display: block;
+    font-size: 1.7rem;
+    font-weight: 900;
+    color: var(--yellow);
+    margin-bottom: 0.25rem;
+  }
+
+  .hero-meta-label {
+    font-size: 0.78rem;
+    color: var(--muted-2);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  /* Equalizer strip — index motif */
+  .equalizer-strip {
+    background: #000;
+    border-top: 1px solid rgba(255,214,0,0.08);
+    border-bottom: 1px solid rgba(255,214,0,0.08);
+    padding: 2.8rem 0;
+  }
+
+  .equalizer {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 9px;
+    height: 90px;
+  }
+
+  .eq-bar {
+    width: 30px;
+    background: var(--yellow);
+    animation: eq 1.3s ease-in-out infinite;
+    transform-origin: bottom;
+  }
+
+  .eq-bar:nth-child(1) { height: 40px; animation-delay: 0s; }
+  .eq-bar:nth-child(2) { height: 72px; animation-delay: .1s; }
+  .eq-bar:nth-child(3) { height: 52px; animation-delay: .2s; }
+  .eq-bar:nth-child(4) { height: 85px; animation-delay: .3s; }
+  .eq-bar:nth-child(5) { height: 60px; animation-delay: .4s; }
+  .eq-bar:nth-child(6) { height: 78px; animation-delay: .5s; }
+  .eq-bar:nth-child(7) { height: 47px; animation-delay: .6s; }
+  .eq-bar:nth-child(8) { height: 68px; animation-delay: .7s; }
+
+  @keyframes eq {
+    0%,100% { transform: scaleY(1); }
+    50% { transform: scaleY(.55); }
+  }
+
+  /* INTRO */
+  .intro {
+    padding: 7rem 4rem 3rem;
+    background: var(--bg);
+  }
+
+  .intro-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .intro h2 {
+    font-size: clamp(2.5rem, 5vw, 4.3rem);
+    line-height: 1.05;
+    font-weight: 900;
+    margin-bottom: 1.6rem;
+  }
+
+  .intro h2 span { color: var(--yellow); }
+
+  .intro p {
+    max-width: 760px;
+    color: var(--muted);
+    font-size: 1.05rem;
+    line-height: 1.8;
+  }
+
+  /* COLLECTION */
+  .collection {
+    padding: 4rem 4rem 7rem;
+    background: var(--bg);
+  }
+
+  .collection:nth-of-type(even) {
+    background: #111;
+  }
+
+  .collection-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .collection-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 2rem;
+    margin-bottom: 2.6rem;
+  }
+
+  .collection-index {
+    color: var(--yellow);
+    font-weight: 800;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    margin-bottom: 0.8rem;
+  }
+
+  .collection h2 {
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    font-weight: 900;
+    line-height: 1.08;
+  }
+
+  .collection-head p {
+    max-width: 520px;
+    color: var(--muted);
+    line-height: 1.7;
+    font-size: 0.98rem;
+  }
+
+  /* Featured project */
+  .featured-card {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    min-height: 440px;
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--yellow);
+    background: #000;
+    overflow: hidden;
+    transition: border-color .25s, transform .25s;
+  }
+
+  .featured-card:hover {
+    border-color: var(--line-strong);
+    transform: translateY(-3px);
+  }
+
+  .featured-copy {
+    padding: 3.5rem 3rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .project-kicker {
+    color: var(--yellow);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+  }
+
+  .project-title {
+    font-size: clamp(2rem, 3.2vw, 3.4rem);
+    font-weight: 900;
+    line-height: 1.05;
+    margin-bottom: 1.4rem;
+  }
+
+  .project-desc {
+    color: var(--muted);
+    line-height: 1.8;
+    font-size: 0.98rem;
+    max-width: 530px;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin-top: 1.5rem;
+  }
+
+  .tag {
+    border: 1px solid rgba(255,214,0,0.24);
+    color: rgba(255,255,255,.68);
+    padding: 0.45rem 0.7rem;
+    font-size: 0.72rem;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+  }
+
+  .card-actions {
+    margin-top: auto;
+    padding-top: 2rem;
+  }
+
+  .open-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .75rem;
+    background: var(--yellow);
+    color: #000;
+    text-decoration: none;
+    font-weight: 900;
+    font-size: .9rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 0.95rem 1.4rem;
+    transition: all .25s;
+  }
+
+  .open-btn:hover {
+    background: #fff;
+    transform: translateX(5px);
+  }
+
+  /* Dashboard preview mock */
+  .preview {
+    position: relative;
+    background: #0b0b0b;
+    border-left: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .preview-bar {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0 14px;
+    background: #151515;
+    border-bottom: 1px solid #252525;
+  }
+
+  .preview-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+
+  .preview-dot:nth-child(1) { background: #ff5f57; }
+  .preview-dot:nth-child(2) { background: #febc2e; }
+  .preview-dot:nth-child(3) { background: #28c840; }
+
+  .preview-url {
+    margin-left: 10px;
+    color: #555;
+    font-size: 0.68rem;
+    letter-spacing: .5px;
+  }
+
+  .preview-canvas {
+    flex: 1;
+    padding: 2rem;
+    background:
+      linear-gradient(rgba(255,214,0,.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,214,0,.025) 1px, transparent 1px),
+      #090909;
+    background-size: 32px 32px;
+  }
+
+  .mock-title {
+    width: 54%;
+    height: 18px;
+    background: var(--yellow);
+    margin-bottom: 13px;
+  }
+
+  .mock-sub {
+    width: 34%;
+    height: 7px;
+    background: #373737;
+    margin-bottom: 28px;
+  }
+
+  .mock-kpis {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .mock-kpi {
+    height: 78px;
+    border: 1px solid #252525;
+    background: #111;
+    position: relative;
+  }
+
+  .mock-kpi::before {
+    content:'';
+    position:absolute;
+    left:12px; top:14px;
+    width:28px; height:7px;
+    background:#3b3b3b;
+  }
+
+  .mock-kpi::after {
+    content:'';
+    position:absolute;
+    left:12px; bottom:14px;
+    width:44px; height:15px;
+    background:rgba(255,214,0,.8);
+  }
+
+  .mock-chart {
+    height: 220px;
+    border: 1px solid #242424;
+    background: #101010;
+    padding: 24px 20px;
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+  }
+
+  .mock-bar {
+    flex:1;
+    background: rgba(255,214,0,.88);
+  }
+
+  .mock-bar:nth-child(1) { height: 35%; }
+  .mock-bar:nth-child(2) { height: 70%; }
+  .mock-bar:nth-child(3) { height: 52%; }
+  .mock-bar:nth-child(4) { height: 84%; }
+  .mock-bar:nth-child(5) { height: 63%; }
+  .mock-bar:nth-child(6) { height: 94%; }
+
+  /* Secondhand cards */
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 1.4rem;
+  }
+
+  .project-card {
+    min-height: 360px;
+    padding: 2.5rem 2rem 2.2rem;
+    display: flex;
+    flex-direction: column;
+    background: #000;
+    border-left: 4px solid var(--yellow);
+    border-top: 1px solid var(--line);
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    transition: all .28s;
+  }
+
+  .project-card:hover {
+    transform: translateX(8px);
+    border-left-width: 8px;
+    background: #090909;
+  }
+
+  .project-card .project-title {
+    font-size: clamp(1.7rem, 2.5vw, 2.55rem);
+  }
+
+  .project-number {
+    margin-top: auto;
+    padding-top: 1.8rem;
+    font-size: 3.8rem;
+    line-height: .9;
+    font-weight: 900;
+    color: rgba(255,214,0,.18);
+  }
+
+  /* Future slot */
+  .future-slot {
+    margin-top: 1.4rem;
+    min-height: 150px;
+    padding: 2rem;
+    border: 1px dashed rgba(255,214,0,.24);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    background: rgba(0,0,0,.35);
+  }
+
+  .future-slot strong {
+    display: block;
+    color: var(--yellow);
+    font-size: 0.8rem;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    margin-bottom: .6rem;
+  }
+
+  .future-slot p {
+    color: var(--muted-2);
+    line-height: 1.7;
+  }
+
+  .future-code {
+    font-size: 4rem;
+    line-height: 1;
+    font-weight: 900;
+    color: rgba(255,214,0,.10);
+    flex: 0 0 auto;
+  }
+
+  /* Footer */
+  footer {
+    padding: 4rem;
+    background: #000;
+    text-align: center;
+    border-top: 1px solid var(--yellow);
+  }
+
+  .footer-logo {
+    font-size: clamp(1.8rem,4vw,3rem);
+    font-weight: 900;
+    color: var(--yellow);
+    margin-bottom: 1.6rem;
+  }
+
+  .footer-info {
+    color: var(--muted);
+    line-height: 1.8;
+    font-size: .9rem;
+  }
+
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { gap: 1rem; }
+    .hero { padding: 9rem 2rem 5rem; }
+    .intro, .collection { padding-left: 2rem; padding-right: 2rem; }
+    .featured-card { grid-template-columns: 1fr; }
+    .preview { border-left: 0; border-top: 1px solid var(--line); min-height: 390px; }
+    .project-grid { grid-template-columns: 1fr; }
+    .collection-head { flex-direction: column; align-items: flex-start; }
+  }
+
+  @media (max-width: 650px) {
+    .logo { font-size: 1.2rem; }
+    .nav-links li:not(:last-child) { display:none; }
+    .hero h1 { letter-spacing: -3px; }
+    .hero-meta { gap: 1rem; }
+    .mock-kpis { grid-template-columns: repeat(2,1fr); }
+    .future-code { display:none; }
+    footer { padding: 3rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Fashiondata00Lab</div>
+  <ul class="nav-links">
+    <li><a href="index.html">HOME</a></li>
+    <li><a href="research.html">RESEARCH</a></li>
+    <li><a href="activities.html">ACTIVITIES</a></li>
+    <li><a href="curriculum.html">CURRICULUM</a></li>
+    <li><a href="data.html" class="nav-data">DATA ↗</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-container">
+    <div class="section-label">DATA ARCHIVE</div>
+    <h1>PROJECT<br>DATA.</h1>
+    <p class="hero-copy">
+      패션·소비자 연구 프로젝트에서 만들어진 데이터 분석 결과를 한곳에서 탐색합니다.
+      해외 시장 진출 데이터부터 중고거래 가격 분석까지, 각 프로젝트의 대시보드와 시각화 결과를 연결합니다.
+    </p>
+
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="hero-meta-num">02</span>
+        <span class="hero-meta-label">Research Areas</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-num">03</span>
+        <span class="hero-meta-label">Dashboards</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-num">04</span>
+        <span class="hero-meta-label">Global Markets</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="equalizer-strip">
+  <div class="equalizer" aria-hidden="true">
+    <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
+    <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
+  </div>
+</section>
+
+<section class="intro">
+  <div class="intro-container">
+    <div class="section-label">RESEARCH COLLECTIONS</div>
+    <h2>Explore the <span>data</span><br>behind our projects.</h2>
+    <p>
+      연구 영역별로 프로젝트 결과를 독립된 데이터 페이지로 정리했습니다.
+      각 카드를 선택하면 실제 분석 대시보드로 이동하여 세부 결과를 확인할 수 있습니다.
+    </p>
+  </div>
+</section>
+
+<section class="collection" id="kfashion">
+  <div class="collection-container">
+    <div class="collection-head">
+      <div>
+        <div class="collection-index">COLLECTION 01</div>
+        <h2>K-Fashion<br>해외 진출 데이터</h2>
+      </div>
+      <p>
+        국가별 K-Fashion·K-Beauty 소비자 인식과 시장 변화를 비교하여
+        해외 진출 전략 수립에 활용하는 글로벌 데이터 프로젝트입니다.
+      </p>
+    </div>
+
+    <article class="featured-card">
+      <div class="featured-copy">
+        <div class="project-kicker">K-FASHION / GLOBAL / 2021–2025</div>
+        <h3 class="project-title">K-Fashion Global<br>Trend Dashboard</h3>
+        <p class="project-desc">
+          베트남·인도네시아·일본·중국 4개국의 K-Fashion·K-Beauty 관련 소비자 데이터를 기반으로
+          접촉경로, 인기요인, 호감도와 소비비중의 변화를 탐색합니다.
+        </p>
+
+        <div class="tags">
+          <span class="tag">4 Countries</span>
+          <span class="tag">2021–2025</span>
+          <span class="tag">KOFICE</span>
+          <span class="tag">Market Entry</span>
+        </div>
+
+        <div class="card-actions">
+          <a class="open-btn" href="kfashion_dashboard.html" target="_blank" rel="noopener">
+            Dashboard Open →
+          </a>
+        </div>
+      </div>
+
+      <div class="preview" aria-hidden="true">
+        <div class="preview-bar">
+          <span class="preview-dot"></span>
+          <span class="preview-dot"></span>
+          <span class="preview-dot"></span>
+          <span class="preview-url">fashiondata00.com / kfashion_dashboard.html</span>
+        </div>
+        <div class="preview-canvas">
+          <div class="mock-title"></div>
+          <div class="mock-sub"></div>
+          <div class="mock-kpis">
+            <div class="mock-kpi"></div><div class="mock-kpi"></div>
+            <div class="mock-kpi"></div><div class="mock-kpi"></div>
+          </div>
+          <div class="mock-chart">
+            <div class="mock-bar"></div><div class="mock-bar"></div><div class="mock-bar"></div>
+            <div class="mock-bar"></div><div class="mock-bar"></div><div class="mock-bar"></div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="collection" id="secondhand">
+  <div class="collection-container">
+    <div class="collection-head">
+      <div>
+        <div class="collection-index">COLLECTION 02</div>
+        <h2>Secondhand<br>Market Data</h2>
+      </div>
+      <p>
+        중고거래 플랫폼의 패션 매물을 활용하여 제품 유형별 호가,
+        가격 분포, 이상치와 세부 카테고리 구조를 탐색하는 데이터 프로젝트입니다.
+      </p>
+    </div>
+
+    <div class="project-grid">
+      <article class="project-card">
+        <div class="project-kicker">SECONDHAND / COS / PRICE DISTRIBUTION</div>
+        <h3 class="project-title">COS Resale<br>Price Analytics</h3>
+        <p class="project-desc">
+          COS 중고 매물을 가방·잡화와 의류로 나누고,
+          아이템별 중앙값·사분위 범위·정상범위와 고가 이상치를 비교합니다.
+        </p>
+        <div class="tags">
+          <span class="tag">Daangn</span>
+          <span class="tag">COS</span>
+          <span class="tag">Price Range</span>
+          <span class="tag">Outliers</span>
+        </div>
+        <div class="card-actions">
+          <a class="open-btn" href="COS_resale_analytics_dashboard.html" target="_blank" rel="noopener">
+            Dashboard Open →
+          </a>
+        </div>
+        <div class="project-number">01</div>
+      </article>
+
+      <article class="project-card">
+        <div class="project-kicker">SECONDHAND / COS / BAG SUBTYPE</div>
+        <h3 class="project-title">COS Bag Type<br>Analytics</h3>
+        <p class="project-desc">
+          가방 매물을 숄더백·토트백·크로스백·퀼팅백 등 세부유형으로 분류하고,
+          제목 내 COS/코스 포함 여부에 따른 가격 분포를 비교합니다.
+        </p>
+        <div class="tags">
+          <span class="tag">Bag Subtype</span>
+          <span class="tag">COS Match</span>
+          <span class="tag">Median</span>
+          <span class="tag">IQR</span>
+        </div>
+        <div class="card-actions">
+          <a class="open-btn" href="COS_bag_type_analytics_dashboard.html" target="_blank" rel="noopener">
+            Dashboard Open →
+          </a>
+        </div>
+        <div class="project-number">02</div>
+      </article>
+    </div>
+
+    <div class="future-slot">
+      <div>
+        <strong>Archive expanding</strong>
+        <p>추후 WTA–WTP Gap, 브랜드별 중고가격 비교, 카테고리별 분석 결과를 이 영역에 계속 추가할 수 있습니다.</p>
+      </div>
+      <div class="future-code">+03</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">FASHION MARKETING DATA LAB</div>
+  <div class="footer-info">
+    <p>Department of Fashion Industry<br>
+    Incheon National University<br>
+    119 Academy-ro, Yeonsu-gu, Incheon, Republic of Korea</p>
+  </div>
+</footer>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    nav.style.background = window.scrollY > 50
+      ? 'rgba(26,26,26,1)'
+      : 'rgba(26,26,26,0.95)';
+  });
+</script>
+
+</body>
+</html>
