@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COS Resale Analytics Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#edf0f7;
+    --bg-deep:#e7ebf4;
+    --surface:rgba(255,255,255,.74);
+    --surface-strong:#f9fbff;
+    --surface-soft:rgba(255,255,255,.46);
+    --text:#262d46;
+    --text-2:#5f6980;
+    --muted:#929bad;
+    --line:rgba(49,61,91,.10);
+    --line-strong:rgba(49,61,91,.17);
+
+    --blue:#72a8e8;
+    --blue-deep:#4f82c5;
+    --blue-soft:rgba(114,168,232,.14);
+    --mint:#67c8b4;
+    --mint-deep:#45a990;
+    --mint-soft:rgba(103,200,180,.14);
+    --danger:#d66f72;
+    --danger-soft:rgba(214,111,114,.11);
+
+    --shadow-sm:0 10px 30px rgba(42,52,82,.055);
+    --shadow-md:0 18px 50px rgba(42,52,82,.08);
+    --shadow-orb:0 16px 30px rgba(55,72,111,.20);
+
+    --radius-sm:12px;
+    --radius-md:18px;
+    --radius-lg:24px;
+    --radius-xl:32px;
+
+    --sidebar:238px;
+    --ease:180ms ease;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    min-height:100vh;
+    color:var(--text);
+    background:
+      radial-gradient(circle at 12% 12%, rgba(255,255,255,.75), transparent 27%),
+      radial-gradient(circle at 92% 8%, rgba(255,255,255,.50), transparent 24%),
+      linear-gradient(145deg, #eef1f8 0%, #ebeff7 46%, #f0f2f8 100%);
+    font-family:"Noto Sans KR","Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    line-height:1.5;
+  }
+
+  button,input,select{font:inherit;}
+  a{color:inherit;text-decoration:none;}
+  .num{
+    font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-variant-numeric:tabular-nums;
+  }
+
+  .app-shell{
+    width:min(1560px, 100%);
+    min-height:100vh;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:var(--sidebar) minmax(0,1fr);
+  }
+
+  /* Sidebar */
+  .sidebar{
+    position:sticky;
+    top:0;
+    height:100vh;
+    padding:30px 22px 26px;
+    display:flex;
+    flex-direction:column;
+    border-right:1px solid var(--line);
+    background:rgba(239,242,248,.66);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    z-index:20;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:42px;
+  }
+  .brand-mark{
+    width:40px;height:40px;position:relative;flex:0 0 auto;
+  }
+  .brand-mark::before,
+  .brand-mark::after{
+    content:"";
+    position:absolute;
+    border-radius:50%;
+  }
+  .brand-mark::before{
+    width:30px;height:30px;left:1px;top:1px;
+    border:6px solid rgba(114,168,232,.24);
+    box-shadow:inset 0 2px 8px rgba(255,255,255,.8);
+  }
+  .brand-mark::after{
+    width:14px;height:14px;right:0;bottom:1px;
+    background:var(--mint);
+    box-shadow:0 7px 14px rgba(80,150,136,.22);
+  }
+  .brand-name{
+    font-family:"Manrope","Noto Sans KR",sans-serif;
+    font-size:13px;
+    font-weight:800;
+    letter-spacing:.04em;
+  }
+  .brand-sub{
+    margin-top:2px;
+    color:var(--muted);
+    font-size:10px;
+    letter-spacing:.10em;
+    text-transform:uppercase;
+  }
+
+  .nav-label{
+    margin:0 0 10px 10px;
+    color:#abb2c2;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+  }
+  .side-nav{display:grid;gap:6px;}
+  .nav-item{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    min-height:44px;
+    padding:0 12px;
+    border-radius:13px;
+    color:var(--text-2);
+    font-size:13px;
+    font-weight:600;
+    transition:background var(--ease),color var(--ease),transform var(--ease);
+  }
+  .nav-item:hover{
+    background:rgba(255,255,255,.58);
+    color:var(--text);
+    transform:translateX(2px);
+  }
+  .nav-item.active{
+    color:var(--text);
+    background:rgba(255,255,255,.76);
+    box-shadow:var(--shadow-sm);
+  }
+  .nav-icon{
+    width:26px;height:26px;
+    display:grid;place-items:center;
+    border-radius:9px;
+    color:var(--blue-deep);
+    background:var(--blue-soft);
+    font-family:"IBM Plex Mono",monospace;
+    font-size:10px;
+    font-weight:600;
+  }
+  .nav-item:nth-child(3) .nav-icon{
+    color:var(--mint-deep);
+    background:var(--mint-soft);
+  }
+
+  .sidebar-foot{
+    margin-top:auto;
+    padding:18px 14px;
+    border:1px solid var(--line);
+    border-radius:18px;
+    background:rgba(255,255,255,.38);
+  }
+  .sidebar-foot strong{
+    display:block;
+    margin-bottom:5px;
+    font-size:11px;
+    letter-spacing:.03em;
+  }
+  .sidebar-foot p{
+    margin:0;
+    color:var(--muted);
+    font-size:10.5px;
+    line-height:1.65;
+  }
+
+  /* Main */
+  .main{
+    min-width:0;
+    padding:28px clamp(28px,4vw,64px) 54px;
+  }
+  .topbar{
+    height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:20px;
+    color:var(--muted);
+    font-size:10.5px;
+    font-weight:700;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+  }
+  .topbar-right{
+    display:flex;align-items:center;gap:9px;
+  }
+  .status-dot{
+    width:8px;height:8px;border-radius:50%;background:var(--mint);
+    box-shadow:0 0 0 5px var(--mint-soft);
+  }
+
+  /* Hero inspired by reference image */
+  .hero{
+    position:relative;
+    min-height:300px;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    padding:46px clamp(32px,5vw,72px);
+    border:1px solid rgba(255,255,255,.62);
+    border-radius:var(--radius-xl);
+    background:
+      linear-gradient(145deg, rgba(255,255,255,.72), rgba(247,249,253,.52));
+    box-shadow:var(--shadow-md);
+    isolation:isolate;
+  }
+  .hero::before,
+  .hero::after{
+    content:"";
+    position:absolute;
+    border-radius:50%;
+    pointer-events:none;
+    z-index:-1;
+  }
+  .hero::before{
+    width:300px;height:300px;
+    right:7%;top:-46px;
+    border:30px solid rgba(255,255,255,.53);
+    box-shadow:
+      inset 0 0 24px rgba(117,130,160,.06),
+      0 5px 28px rgba(88,100,132,.08);
+  }
+  .hero::after{
+    width:230px;height:230px;
+    left:-115px;bottom:-80px;
+    border:28px solid rgba(255,255,255,.45);
+    box-shadow:0 8px 25px rgba(88,100,132,.06);
+  }
+  .hero-copy{
+    position:relative;
+    z-index:2;
+    width:min(730px, 78%);
+  }
+  .hero-kicker{
+    margin-bottom:14px;
+    color:var(--text);
+    font-family:"Manrope","Noto Sans KR",sans-serif;
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  .hero h1{
+    margin:0;
+    max-width:780px;
+    font-family:"Manrope","Noto Sans KR",sans-serif;
+    font-size:clamp(38px,5vw,66px);
+    line-height:.98;
+    letter-spacing:-.045em;
+    font-weight:800;
+    color:var(--text);
+  }
+  .hero h1 span{display:block;}
+  .hero p{
+    max-width:670px;
+    margin:22px 0 0;
+    color:var(--text-2);
+    font-size:14px;
+    line-height:1.8;
+  }
+  .hero-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:24px;
+  }
+  .hero-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    min-height:34px;
+    padding:0 12px;
+    border:1px solid rgba(255,255,255,.75);
+    border-radius:999px;
+    background:rgba(255,255,255,.55);
+    color:var(--text-2);
+    font-size:11px;
+    font-weight:600;
+    box-shadow:0 4px 16px rgba(70,82,115,.04);
+  }
+  .hero-chip i{
+    width:7px;height:7px;border-radius:50%;background:var(--blue);display:block;
+  }
+  .hero-chip:nth-child(2) i{background:var(--mint);}
+  .orb{
+    position:absolute;
+    z-index:1;
+    border-radius:50%;
+    box-shadow:var(--shadow-orb);
+  }
+  .orb-blue{
+    width:78px;height:78px;
+    right:28%;top:55px;
+    background:linear-gradient(145deg,#84b5ee,#6da3e4);
+  }
+  .orb-mint{
+    width:104px;height:104px;
+    right:12%;bottom:30px;
+    background:linear-gradient(145deg,#77d1bd,#61c5ae);
+  }
+  .ring-small{
+    position:absolute;
+    right:-58px;
+    bottom:-76px;
+    width:180px;height:180px;
+    border:24px solid rgba(255,255,255,.50);
+    border-radius:50%;
+    box-shadow:0 6px 26px rgba(88,100,132,.06);
+  }
+
+  /* KPI */
+  .kpi-grid{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:14px;
+    margin:20px 0 42px;
+  }
+  .kpi-card{
+    position:relative;
+    overflow:hidden;
+    min-height:128px;
+    padding:20px 20px 17px;
+    border:1px solid rgba(255,255,255,.72);
+    border-radius:var(--radius-lg);
+    background:rgba(255,255,255,.63);
+    box-shadow:var(--shadow-sm);
+    transition:transform var(--ease), box-shadow var(--ease), background var(--ease);
+  }
+  .kpi-card:hover{
+    transform:translateY(-2px);
+    background:rgba(255,255,255,.82);
+    box-shadow:var(--shadow-md);
+  }
+  .kpi-card::after{
+    content:"";
+    position:absolute;
+    width:64px;height:64px;
+    right:-18px;top:-20px;
+    border-radius:50%;
+    border:12px solid var(--blue-soft);
+  }
+  .kpi-card.mint::after{border-color:var(--mint-soft);}
+  .kpi-label{
+    color:var(--muted);
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.11em;
+    text-transform:uppercase;
+  }
+  .kpi-value{
+    margin-top:11px;
+    font-family:"Manrope","Noto Sans KR",sans-serif;
+    font-size:clamp(24px,2.3vw,34px);
+    line-height:1;
+    font-weight:800;
+    letter-spacing:-.035em;
+    color:var(--text);
+  }
+  .kpi-note{
+    margin-top:10px;
+    color:var(--text-2);
+    font-size:10.5px;
+  }
+  .kpi-line{
+    width:34px;height:3px;border-radius:999px;
+    margin-top:12px;background:var(--blue);
+  }
+  .kpi-card.mint .kpi-line{background:var(--mint);}
+
+  .content-heading{
+    display:flex;
+    align-items:end;
+    justify-content:space-between;
+    gap:24px;
+    margin-bottom:18px;
+  }
+  .content-heading .small{
+    color:var(--blue-deep);
+    font-family:"Manrope",sans-serif;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.15em;
+    text-transform:uppercase;
+  }
+  .content-heading h2{
+    margin:5px 0 0;
+    font-family:"Manrope","Noto Sans KR",sans-serif;
+    font-size:25px;
+    letter-spacing:-.025em;
+  }
+  .content-heading p{
+    max-width:520px;
+    margin:0;
+    color:var(--muted);
+    font-size:11.5px;
+    line-height:1.7;
+    text-align:right;
+  }
+
+  /* Dataset blocks */
+  section.dataset{
+    margin-top:18px;
+    padding:26px;
+    border:1px solid rgba(255,255,255,.76);
+    border-radius:var(--radius-xl);
+    background:rgba(255,255,255,.57);
+    box-shadow:var(--shadow-sm);
+    scroll-margin-top:24px;
+  }
+  section.dataset + section.dataset{margin-top:24px;}
+  .dataset-head{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:18px;
+    margin-bottom:18px;
+  }
+  .dataset-title-wrap{min-width:0;}
+  .dataset-index{
+    display:block;
+    margin-bottom:5px;
+    color:var(--muted);
+    font-family:"IBM Plex Mono",monospace;
+    font-size:10px;
+    letter-spacing:.09em;
+  }
+  .dataset-head h2{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+    margin:0;
+    font-family:"Manrope","Noto Sans KR",sans-serif;
+    font-size:24px;
+    font-weight:800;
+    letter-spacing:-.03em;
+  }
+  .dataset-tag{
+    display:inline-flex;
+    align-items:center;
+    min-height:26px;
+    padding:0 10px;
+    border-radius:999px;
+    background:var(--blue-soft);
+    color:var(--blue-deep);
+    font-family:"IBM Plex Mono",monospace;
+    font-size:10px;
+    font-weight:600;
+    letter-spacing:.01em;
+  }
+  #sec-clothes .dataset-tag{
+    background:var(--mint-soft);
+    color:var(--mint-deep);
+  }
+  .dataset-description{
+    max-width:440px;
+    color:var(--muted);
+    font-size:11px;
+    text-align:right;
+  }
+
+  .chart-card{
+    overflow:hidden;
+    padding:18px 18px 10px;
+    border:1px solid var(--line);
+    border-radius:22px;
+    background:rgba(250,251,254,.88);
+  }
+  .chart-legend{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:10px;
+    padding:0 2px 14px;
+    border-bottom:1px solid var(--line);
+  }
+  .chart-legend .item{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    min-height:28px;
+    padding:0 9px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    background:rgba(255,255,255,.72);
+    color:var(--muted);
+    font-size:9.5px;
+    font-weight:600;
+  }
+  .lg-box{width:14px;height:9px;background:var(--blue-soft);border:1.5px solid var(--blue);border-radius:3px;}
+  .lg-line{width:14px;height:0;border-top:1.5px solid var(--blue);}
+  .lg-dot{width:7px;height:7px;border-radius:50%;background:var(--blue);}
+  .lg-out{width:7px;height:7px;border-radius:50%;background:var(--danger);}
+
+  .chart-scroll{
+    overflow-x:auto;
+    overflow-y:hidden;
+    padding:6px 2px 5px;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(85,100,130,.25) transparent;
+  }
+  svg.rangechart{
+    display:block;
+    width:100%;
+    min-width:860px;
+    max-width:none;
+    height:auto;
+    overflow:visible;
+  }
+  .row-label{font-size:12px;fill:var(--text-2);font-weight:700;}
+  .row-n{font-size:9.8px;fill:var(--muted);font-family:"IBM Plex Mono",monospace;font-weight:500;}
+  .gridline{stroke:rgba(69,82,111,.11);stroke-width:1;}
+  .axis-label{font-size:9.5px;fill:var(--muted);font-family:"IBM Plex Mono",monospace;}
+  .whisker{stroke:var(--blue);stroke-width:1.5;}
+  .box{fill:var(--blue-soft);stroke:var(--blue);stroke-width:1.5;rx:4;}
+  .median-tick{stroke:var(--blue-deep);stroke-width:2.5;}
+  .medlabel{font-size:10.5px;font-weight:700;fill:var(--blue-deep);font-family:"IBM Plex Mono",monospace;}
+  .outlier-dot{fill:var(--danger);opacity:.88;}
+  .hit{fill:transparent;cursor:pointer;}
+
+  #sec-clothes .whisker{stroke:var(--mint);}
+  #sec-clothes .box{fill:var(--mint-soft);stroke:var(--mint);}
+  #sec-clothes .median-tick{stroke:var(--mint-deep);}
+  #sec-clothes .medlabel{fill:var(--mint-deep);}
+
+  .tooltip{
+    position:fixed;
+    pointer-events:none;
+    z-index:100;
+    opacity:0;
+    transform:translate(-50%,calc(-100% - 12px));
+    max-width:min(360px,calc(100vw - 24px));
+    padding:10px 13px;
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:11px;
+    background:#252d45;
+    color:#f6f8fc;
+    box-shadow:0 16px 36px rgba(28,36,58,.26);
+    font-family:"IBM Plex Mono",monospace;
+    font-size:10.5px;
+    line-height:1.6;
+    white-space:nowrap;
+    transition:opacity 120ms ease;
+  }
+  .tooltip b{
+    color:#fff;
+    font-family:"Noto Sans KR",sans-serif;
+    font-weight:700;
+  }
+  .tooltip.show{opacity:1;}
+
+  details.table-toggle{
+    margin-top:12px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    border-radius:17px;
+    background:rgba(255,255,255,.46);
+    transition:background var(--ease),border-color var(--ease);
+  }
+  details.table-toggle[open]{
+    background:rgba(255,255,255,.72);
+    border-color:var(--line-strong);
+  }
+  details.table-toggle > summary{
+    list-style:none;
+    cursor:pointer;
+    user-select:none;
+    min-height:48px;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:0 15px;
+    color:var(--text-2);
+    font-size:11px;
+    font-weight:700;
+    transition:color var(--ease),background var(--ease);
+  }
+  details.table-toggle > summary:hover{
+    color:var(--text);
+    background:rgba(255,255,255,.55);
+  }
+  details.table-toggle > summary::-webkit-details-marker{display:none;}
+  details.table-toggle > summary::before{
+    content:"";
+    width:8px;height:8px;
+    border-right:1.8px solid var(--blue-deep);
+    border-bottom:1.8px solid var(--blue-deep);
+    transform:rotate(-45deg);
+    transition:transform var(--ease);
+    margin-right:2px;
+  }
+  #sec-clothes details.table-toggle > summary::before{
+    border-color:var(--mint-deep);
+  }
+  details.table-toggle[open] > summary::before{transform:rotate(45deg);}
+
+  .tablewrap{
+    overflow:auto;
+    margin:0 12px 12px;
+    border:1px solid var(--line);
+    border-radius:13px;
+    background:rgba(255,255,255,.74);
+    max-height:520px;
+  }
+  table{
+    width:100%;
+    min-width:680px;
+    border-collapse:separate;
+    border-spacing:0;
+    font-size:11px;
+  }
+  thead th{
+    position:sticky;
+    top:0;
+    z-index:2;
+    padding:10px 12px;
+    text-align:right;
+    white-space:nowrap;
+    border-bottom:1px solid var(--line-strong);
+    background:#f1f4f9;
+    color:var(--muted);
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  thead th:first-child,
+  tbody td:first-child{text-align:left;}
+  tbody td{
+    padding:10px 12px;
+    text-align:right;
+    white-space:nowrap;
+    border-bottom:1px solid rgba(49,61,91,.075);
+    color:var(--text-2);
+    transition:background var(--ease),color var(--ease);
+  }
+  tbody tr:last-child td{border-bottom:0;}
+  tbody tr:hover td{
+    background:rgba(114,168,232,.06);
+    color:var(--text);
+  }
+  #sec-clothes tbody tr:hover td{background:rgba(103,200,180,.06);}
+  td.name{font-weight:700;color:var(--text);}
+  td.median-cell{
+    color:var(--blue-deep);
+    font-weight:700;
+    background:rgba(114,168,232,.055);
+  }
+  #sec-clothes td.median-cell{
+    color:var(--mint-deep);
+    background:rgba(103,200,180,.055);
+  }
+
+  .outlier-list{
+    display:flex;
+    flex-direction:column;
+    margin:0 14px 4px;
+    max-height:520px;
+    overflow-y:auto;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(85,100,130,.25) transparent;
+  }
+
+  /* 고가 이상치 전용 아이템별 필터 */
+  .outlier-filter-bar{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:7px;
+    margin:0 14px 12px;
+    padding:12px 14px;
+    border:1px solid var(--line);
+    border-radius:14px;
+    background:rgba(255,255,255,.5);
+  }
+  .outlier-filter-label{
+    margin-right:2px;
+    color:var(--muted);
+    font-size:9.5px;
+    font-weight:800;
+    letter-spacing:.09em;
+    text-transform:uppercase;
+    flex:0 0 auto;
+  }
+  .outlier-filter-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    min-height:27px;
+    padding:0 10px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    background:rgba(255,255,255,.7);
+    color:var(--text-2);
+    font-size:10.3px;
+    font-weight:600;
+    cursor:pointer;
+    user-select:none;
+    transition:background var(--ease),color var(--ease),border-color var(--ease);
+  }
+  .outlier-filter-chip:hover{background:#fff;}
+  .outlier-filter-chip .n{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:9px;
+    color:var(--muted);
+  }
+  .outlier-filter-chip.active{
+    border-color:var(--blue);
+    background:var(--blue);
+    color:#fff;
+  }
+  .outlier-filter-chip.active .n{color:rgba(255,255,255,.82);}
+  #sec-clothes .outlier-filter-chip.active{
+    border-color:var(--mint);
+    background:var(--mint);
+  }
+  .outlier-filter-chip.reset{
+    border-style:dashed;
+    border-color:var(--line-strong);
+    color:var(--blue-deep);
+    font-weight:700;
+    margin-left:auto;
+  }
+  #sec-clothes .outlier-filter-chip.reset{color:var(--mint-deep);}
+  .outlier-filter-status{
+    margin:0 14px 8px;
+    color:var(--muted);
+    font-size:10px;
+  }
+  .filter-empty{
+    padding:30px 12px;
+    text-align:center;
+    color:var(--muted);
+    font-size:12px;
+  }
+  .outlier-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    min-height:42px;
+    padding:8px 3px;
+    border-bottom:1px solid var(--line);
+    font-size:10.8px;
+  }
+  .outlier-row:last-child{border-bottom:0;}
+  .outlier-row .t{
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    color:var(--text-2);
+  }
+  .outlier-row .p{
+    flex:0 0 auto;
+    padding:5px 8px;
+    border-radius:8px;
+    background:var(--danger-soft);
+    color:var(--danger);
+    font-weight:700;
+    font-size:9.8px;
+  }
+  .outlier-row .c{
+    display:inline-block;
+    margin-right:8px;
+    padding:3px 6px;
+    border-radius:6px;
+    background:rgba(80,92,120,.07);
+    color:var(--muted);
+    font-size:9px;
+  }
+  .note{
+    margin:10px 14px 14px;
+    padding:12px 13px;
+    border-left:3px solid rgba(114,168,232,.45);
+    border-radius:4px 10px 10px 4px;
+    background:rgba(114,168,232,.055);
+    color:var(--muted);
+    font-size:10px;
+    line-height:1.7;
+  }
+  #sec-clothes .note{
+    border-left-color:rgba(103,200,180,.55);
+    background:rgba(103,200,180,.05);
+  }
+
+  footer{
+    margin-top:30px;
+    padding:18px 4px 0;
+    border-top:1px solid var(--line);
+    color:var(--muted);
+    font-size:9.5px;
+    line-height:1.75;
+  }
+
+  /* Focus + accessibility */
+  a:focus-visible,summary:focus-visible{
+    outline:3px solid rgba(114,168,232,.30);
+    outline-offset:3px;
+    border-radius:10px;
+  }
+
+  /* Responsive */
+  @media (max-width:1180px){
+    :root{--sidebar:200px;}
+    .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .hero-copy{width:min(720px,72%);}
+    .orb-blue{right:23%;}
+  }
+
+  @media (max-width:880px){
+    .app-shell{display:block;}
+    .sidebar{
+      position:relative;
+      width:100%;
+      height:auto;
+      padding:16px 20px;
+      border-right:0;
+      border-bottom:1px solid var(--line);
+    }
+    .brand{margin:0 0 12px;}
+    .brand-mark{width:34px;height:34px;}
+    .brand-mark::before{width:26px;height:26px;border-width:5px;}
+    .brand-mark::after{width:12px;height:12px;}
+    .nav-label,.sidebar-foot{display:none;}
+    .side-nav{
+      display:flex;
+      overflow-x:auto;
+      padding-bottom:2px;
+    }
+    .nav-item{min-width:max-content;}
+    .main{padding:18px 20px 42px;}
+    .topbar{margin-bottom:14px;}
+    .hero{min-height:300px;padding:36px 28px;}
+    .hero-copy{width:88%;}
+    .orb-blue{right:14%;top:42px;width:64px;height:64px;}
+    .orb-mint{right:5%;width:82px;height:82px;}
+    .content-heading{align-items:flex-start;flex-direction:column;}
+    .content-heading p{text-align:left;}
+  }
+
+  @media (max-width:620px){
+    .topbar{font-size:9px;}
+    .topbar > span:first-child{display:none;}
+    .hero{
+      min-height:355px;
+      align-items:flex-start;
+      padding:34px 22px 26px;
+    }
+    .hero-copy{width:100%;}
+    .hero h1{font-size:42px;}
+    .hero p{font-size:12px;line-height:1.75;max-width:90%;}
+    .hero::before{width:230px;height:230px;right:-60px;top:105px;border-width:24px;}
+    .hero::after{display:none;}
+    .orb-blue{width:54px;height:54px;right:22px;top:190px;}
+    .orb-mint{width:70px;height:70px;right:76px;bottom:18px;}
+    .ring-small{display:none;}
+    .kpi-grid{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:34px;}
+    .kpi-card{min-height:112px;padding:16px;}
+    .kpi-value{font-size:23px;}
+    .content-heading h2{font-size:22px;}
+    section.dataset{padding:16px;border-radius:24px;}
+    .dataset-head{align-items:flex-start;flex-direction:column;}
+    .dataset-description{text-align:left;}
+    .chart-card{padding:12px 10px 7px;}
+    .chart-legend{gap:6px;}
+    .chart-legend .item{font-size:8.5px;padding:0 7px;}
+  }
+
+  @media (max-width:420px){
+    .main{padding-inline:14px;}
+    .kpi-grid{grid-template-columns:1fr;}
+    .hero h1{font-size:38px;}
+    .hero-meta{display:none;}
+    .dataset-head h2{font-size:21px;}
+  }
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <aside class="sidebar" aria-label="대시보드 탐색">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true"></div>
+      <div>
+        <div class="brand-name">RESALE LAB</div>
+        <div class="brand-sub">Market Analytics</div>
+      </div>
+    </div>
+
+    <div class="nav-label">Dashboard</div>
+    <nav class="side-nav">
+      <a class="nav-item active" href="#overview">
+        <span class="nav-icon">01</span>
+        Overview
+      </a>
+      <a class="nav-item" href="#sec-bags">
+        <span class="nav-icon">02</span>
+        가방 · 잡화
+      </a>
+      <a class="nav-item" href="#sec-clothes">
+        <span class="nav-icon">03</span>
+        의류
+      </a>
+    </nav>
+
+    <div class="sidebar-foot">
+      <strong>COS · DAANGN DATA</strong>
+      <p>브랜드명이 제목에 포함된 매물을 기준으로 가격 분포와 이상치를 요약한 분석 화면입니다.</p>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <span>Resale Market / Fashiondata00_INU</span>
+      <div class="topbar-right">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span>Dataset Ready</span>
+      </div>
+    </div>
+
+    <header class="hero" id="overview">
+      <div class="hero-copy">
+        <div class="hero-kicker">COS RESALE PRICE REPORT</div>
+        <h1><span>PRICE</span> ANALYTICS.</h1>
+        <p>당근마켓에서 수집한 COS 중고 매물을 아이템별로 분류해 가격 분포를 시각화했습니다. 상자는 매물의 절반이 모여 있는 구간(Q1–Q3), 굵은 선은 중앙값을 의미합니다.</p>
+        <div class="hero-meta">
+          <span class="hero-chip"><i></i> 가방·잡화 + 의류</span>
+          <span class="hero-chip"><i></i> 이상치 별도 추적</span>
+        </div>
+      </div>
+      <span class="orb orb-blue" aria-hidden="true"></span>
+      <span class="orb orb-mint" aria-hidden="true"></span>
+      <span class="ring-small" aria-hidden="true"></span>
+    </header>
+
+    <section class="kpi-grid" aria-label="주요 지표">
+      <article class="kpi-card">
+        <div class="kpi-label">Total Listings</div>
+        <div class="kpi-value num"><span id="total-n">-</span></div>
+        <div class="kpi-note">분석에 포함된 전체 매물</div>
+        <div class="kpi-line"></div>
+      </article>
+      <article class="kpi-card mint">
+        <div class="kpi-label">Detected Outliers</div>
+        <div class="kpi-value num"><span id="total-outliers">-</span></div>
+        <div class="kpi-note">통계적 고가 이상치 전체</div>
+        <div class="kpi-line"></div>
+      </article>
+      <article class="kpi-card">
+        <div class="kpi-label">Bag / Goods Median</div>
+        <div class="kpi-value num" id="bag-median">-</div>
+        <div class="kpi-note"><span id="m-bag-n">-</span>건 · 가방·잡화</div>
+        <div class="kpi-line"></div>
+      </article>
+      <article class="kpi-card mint">
+        <div class="kpi-label">Clothing Median</div>
+        <div class="kpi-value num" id="cloth-median">-</div>
+        <div class="kpi-note"><span id="m-cloth-n">-</span>건 · 의류</div>
+        <div class="kpi-line"></div>
+      </article>
+    </section>
+
+    <div class="content-heading">
+      <div>
+        <div class="small">Price Distribution</div>
+        <h2>아이템별 가격 범위</h2>
+      </div>
+      <p>각 카테고리의 중앙값과 사분위 범위를 중심으로 비교합니다. 상세 수치와 고가 이상치는 각 섹션에서 펼쳐볼 수 있습니다.</p>
+    </div>
+
+    <section class="dataset" id="sec-bags">
+      <div class="dataset-head">
+        <div class="dataset-title-wrap">
+          <span class="dataset-index">DATASET / 01</span>
+          <h2>가방 · 잡화 <span class="dataset-tag" id="bag-tag">n건</span></h2>
+        </div>
+        <div class="dataset-description">가방, 신발, 액세서리 등 비의류 카테고리의 가격 분포</div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-legend">
+          <span class="item"><span class="lg-box"></span>가격이 몰린 구간 (Q1–Q3)</span>
+          <span class="item"><span class="lg-line"></span>정상 범위 (이상치 제외 최저~최고)</span>
+          <span class="item"><span class="lg-dot"></span>중앙값</span>
+          <span class="item"><span class="lg-out"></span>이상치 매물</span>
+        </div>
+        <div id="chart-bags"></div>
+      </div>
+
+      <details class="table-toggle">
+        <summary>아이템별 상세 수치표 보기</summary>
+        <div class="tablewrap"><table id="table-bags"></table></div>
+      </details>
+
+      <details class="table-toggle" id="out-bags-wrap">
+        <summary>고가 이상치 매물 전체 보기 (총 <span id="out-bags-count">0</span>건)</summary>
+        <div class="outlier-filter-bar" id="outlier-filter-bags">
+          <span class="outlier-filter-label">아이템별 필터</span>
+        </div>
+        <div class="outlier-filter-status" id="outlier-filter-status-bags"></div>
+        <div class="outlier-list" id="outlier-bags"></div>
+        <p class="note">브랜드 매칭이 "코스"/"cos" 문자열 포함 여부로 이뤄지다 보니, 디올·에르메스·루이비통처럼 제목에 "코스"가 우연히 들어간 타 브랜드 상품이나 여러 브랜드 묶음판매 글이 일부 섞여 있습니다. 대표가 계산에는 영향이 적도록 이상치로 분리했습니다. 이상치 목록은 개수 제한 없이 전부 표시하며, 필터는 이 목록에만 적용됩니다.</p>
+      </details>
+    </section>
+
+    <section class="dataset" id="sec-clothes">
+      <div class="dataset-head">
+        <div class="dataset-title-wrap">
+          <span class="dataset-index">DATASET / 02</span>
+          <h2>의류 <span class="dataset-tag" id="cloth-tag">n건</span></h2>
+        </div>
+        <div class="dataset-description">아우터, 원피스, 니트, 팬츠 등 의류 카테고리의 가격 분포</div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-legend">
+          <span class="item"><span class="lg-box"></span>가격이 몰린 구간 (Q1–Q3)</span>
+          <span class="item"><span class="lg-line"></span>정상 범위 (이상치 제외 최저~최고)</span>
+          <span class="item"><span class="lg-dot"></span>중앙값</span>
+          <span class="item"><span class="lg-out"></span>이상치 매물</span>
+        </div>
+        <div id="chart-clothes"></div>
+      </div>
+
+      <details class="table-toggle">
+        <summary>아이템별 상세 수치표 보기</summary>
+        <div class="tablewrap"><table id="table-clothes"></table></div>
+      </details>
+
+      <details class="table-toggle" id="out-clothes-wrap">
+        <summary>고가 이상치 매물 전체 보기 (총 <span id="out-clothes-count">0</span>건)</summary>
+        <div class="outlier-filter-bar" id="outlier-filter-clothes">
+          <span class="outlier-filter-label">아이템별 필터</span>
+        </div>
+        <div class="outlier-filter-status" id="outlier-filter-status-clothes"></div>
+        <div class="outlier-list" id="outlier-clothes"></div>
+        <p class="note">묶음판매("자라·코스·유니클로 일괄") 글이나 코스프레("코스") 등 브랜드와 무관한 오매칭 글도 일부 섞여 있어 이상치로 분리했습니다. 이상치 목록은 개수 제한 없이 전부 표시하며, 필터는 이 목록에만 적용됩니다.</p>
+      </details>
+    </section>
+
+    <footer>
+      가격은 판매글에 적힌 호가 기준이며 실거래가와 다를 수 있습니다. "1원"·"가격제안" 등 협의가로 등록된 극단치는 상자/중앙값 계산에는 포함하되, 정상 범위(휘스커) 산출 시에는 통계적 이상치로 분리했습니다.
+    </footer>
+  </main>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+const DATA = {"bags": {"items": [{"name": "가방", "n": 903, "min": 1, "wlo": 1, "q1": 25000, "median": 39000, "q3": 55000, "whi": 100000, "max": 999999, "mean": 45850, "n_out": 31}, {"name": "신발", "n": 70, "min": 1, "wlo": 1, "q1": 20000, "median": 30000, "q3": 67500, "whi": 120000, "max": 238000, "mean": 50346, "n_out": 7}, {"name": "머플러/스카프", "n": 21, "min": 23000, "wlo": 23000, "q1": 42000, "median": 52000, "q3": 72000, "whi": 110000, "max": 145000, "mean": 61238, "n_out": 1}, {"name": "모자", "n": 52, "min": 1, "wlo": 1, "q1": 10000, "median": 20000, "q3": 29250, "whi": 53000, "max": 62000, "mean": 21077, "n_out": 1}, {"name": "주얼리/액세서리", "n": 19, "min": 1, "wlo": 1, "q1": 10000, "median": 25000, "q3": 30000, "whi": 51000, "max": 63000, "mean": 23521, "n_out": 1}, {"name": "기타", "n": 12, "min": 1234, "wlo": 1234, "q1": 10509, "median": 54250, "q3": 72500, "whi": 130000, "max": 130000, "mean": 50007, "n_out": 0}, {"name": "파우치", "n": 14, "min": 111, "wlo": 111, "q1": 17750, "median": 30000, "q3": 42250, "whi": 70000, "max": 70000, "mean": 30794, "n_out": 0}, {"name": "시계", "n": 2, "min": 60000, "wlo": 60000, "q1": 102500, "median": 145000, "q3": 187500, "whi": 230000, "max": 230000, "mean": 145000, "n_out": 0}, {"name": "키링", "n": 9, "min": 10000, "wlo": 10000, "q1": 30000, "median": 40000, "q3": 48000, "whi": 73000, "max": 73000, "mean": 38222, "n_out": 0}, {"name": "장갑", "n": 1, "min": 50000, "wlo": 50000, "q1": 50000, "median": 50000, "q3": 50000, "whi": 50000, "max": 50000, "mean": 50000, "n_out": 0}, {"name": "선글라스", "n": 2, "min": 85000, "wlo": 85000, "q1": 99750, "median": 114500, "q3": 129250, "whi": 144000, "max": 144000, "mean": 114500, "n_out": 0}, {"name": "셔츠/블라우스", "n": 2, "min": 49000, "wlo": 49000, "q1": 61750, "median": 74500, "q3": 87250, "whi": 100000, "max": 100000, "mean": 74500, "n_out": 0}, {"name": "벨트", "n": 3, "min": 1, "wlo": 1, "q1": 5000, "median": 10000, "q3": 19500, "whi": 29000, "max": 29000, "mean": 13000, "n_out": 0}, {"name": "원피스", "n": 3, "min": 10000, "wlo": 10000, "q1": 26500, "median": 43000, "q3": 44000, "whi": 45000, "max": 45000, "mean": 32667, "n_out": 0}, {"name": "팬츠", "n": 3, "min": 1234, "wlo": 1234, "q1": 13617, "median": 26000, "q3": 30500, "whi": 35000, "max": 35000, "mean": 20745, "n_out": 0}, {"name": "니트웨어", "n": 2, "min": 30000, "wlo": 30000, "q1": 34500, "median": 39000, "q3": 43500, "whi": 48000, "max": 48000, "mean": 39000, "n_out": 0}, {"name": "스커트", "n": 1, "min": 40000, "wlo": 40000, "q1": 40000, "median": 40000, "q3": 40000, "whi": 40000, "max": 40000, "mean": 40000, "n_out": 0}, {"name": "양말", "n": 1, "min": 11000, "wlo": 11000, "q1": 11000, "median": 11000, "q3": 11000, "whi": 11000, "max": 11000, "mean": 11000, "n_out": 0}, {"name": "지갑", "n": 4, "min": 10500, "wlo": 10500, "q1": 13875, "median": 17500, "q3": 27500, "whi": 20000, "max": 50000, "mean": 23875, "n_out": 1}, {"name": "가디건", "n": 1, "min": 140000, "wlo": 140000, "q1": 140000, "median": 140000, "q3": 140000, "whi": 140000, "max": 140000, "mean": 140000, "n_out": 0}, {"name": "더스트백", "n": 1, "min": 1000, "wlo": 1000, "q1": 1000, "median": 1000, "q3": 1000, "whi": 1000, "max": 1000, "mean": 1000, "n_out": 0}], "n": 1126, "median": 35500, "outliers": [{"name": "가방", "title": "COS 구름백 오버사이즈 블랙", "price": 999999}, {"name": "가방", "title": "COS 스튜디오 볼링백 블랙", "price": 430000}, {"name": "가방", "title": "코스 아틀리에 가방", "price": 320000}, {"name": "가방", "title": "코스 TRULLO 크로스바디 백 블랙", "price": 300000}, {"name": "가방", "title": "COS Quilted Messenger Bag Beige", "price": 260000}, {"name": "가방", "title": "코스 cos 패러다임 백", "price": 250000}, {"name": "가방", "title": "COS 코스 패러다임 미니 토트백 블랙 가죽", "price": 250000}, {"name": "가방", "title": "COS 코스 패러다임 미니 토트백 블랙 새상품", "price": 240000}, {"name": "신발", "title": "코스 니하이 레더 부츠 37", "price": 238000}, {"name": "가방", "title": "코스 몽마르뜨 레더 볼링백 (새제품)", "price": 210000}, {"name": "가방", "title": "COS 스몰 볼링백 레더", "price": 200000}, {"name": "가방", "title": "COS 코스 구름 레더백 라지", "price": 200000}, {"name": "가방", "title": "[새상품] (12/27까지만 판매‼️) cos 코스 레더 크로스바디백 블랙", "price": 188000}, {"name": "가방", "title": "COS 미니 카바텔리 클러치 블랙", "price": 185000}, {"name": "신발", "title": "(새상품)COS 레더플랫슈즈 신제품", "price": 175000}, {"name": "신발", "title": "cos 코스 레더 발레 플랫 화이트 새상품 36", "price": 170000}, {"name": "신발", "title": "COS 레더 발레 플랫 화이트 38(새상품)", "price": 160000}, {"name": "신발", "title": "COS 플랫 새상품", "price": 160000}, {"name": "가방", "title": "COS 폴리오 미니 레더백 (새상품)", "price": 150000}, {"name": "가방", "title": "COS 코스 복조리 백!!/ 1회 착용", "price": 150000}, {"name": "가방", "title": "(새상품) COS 코스 오버사이즈 퀼티드 크로스백 구름백 화이트", "price": 150000}, {"name": "가방", "title": "코스 COS 카바텔리 버킷백 블랙", "price": 150000}, {"name": "가방", "title": "COS 코스 퀼티드 메신저백 베이지 새상품", "price": 150000}, {"name": "신발", "title": "COS 블랙 첼시 통굽 부츠 EUR 38", "price": 150000}, {"name": "신발", "title": "아디다스 코스컵 골프화 235", "price": 150000}, {"name": "머플러/스카프", "title": "Cos 코스 모헤어 블렌드 머플러 팝니다 [ 레드화이트 ]", "price": 145000}, {"name": "가방", "title": "cos 마이크로백 레더화이트", "price": 140000}, {"name": "가방", "title": "코스 오버사이즈퀼티드백(새상품)", "price": 140000}, {"name": "가방", "title": "코스 cos 레더 마이크로 스윙 크로스바디", "price": 130000}, {"name": "가방", "title": "코스 오버사이즈 구름백 블랙", "price": 130000}, {"name": "가방", "title": "COS 퀼티드 메신저백 블랙", "price": 126000}, {"name": "가방", "title": "COS QUILTED MESSENGER 코스 퀄티트백", "price": 120000}, {"name": "가방", "title": "COS 코스 레더 쇼퍼백", "price": 120000}, {"name": "가방", "title": "COS 코스 퀼티드 메신저백 핑크", "price": 120000}, {"name": "가방", "title": "COS 카바텔리 미니 클러치", "price": 120000}, {"name": "가방", "title": "COS Cavatelli 클러치 버건디", "price": 111000}, {"name": "가방", "title": "COS 코스 퀼티드 미니백 퍼플", "price": 110000}, {"name": "가방", "title": "COS 블랙 나일론 토트/숄더백", "price": 110000}, {"name": "가방", "title": "코스 가방 COS 오버사이즈 퀼티드백 오프화이트 판매합니다", "price": 105000}, {"name": "주얼리/액세서리", "title": "코스 진주귀걸이 cos atelier pearl earrings", "price": 63000}, {"name": "모자", "title": "COS 코스 크링클드 버킷햇 (M/L size)", "price": 62000}, {"name": "지갑", "title": "⛔️COS 레오파드 포니 헤어 크로스바디 카드홀더⛔️", "price": 50000}], "n_outliers_total": 42}, "clothes": {"items": [{"name": "팬츠", "n": 233, "min": 1, "wlo": 1, "q1": 18000, "median": 30000, "q3": 38000, "whi": 68000, "max": 115000, "mean": 31670, "n_out": 18}, {"name": "원피스", "n": 830, "min": 1, "wlo": 1, "q1": 20000, "median": 30000, "q3": 50000, "whi": 95000, "max": 250000, "mean": 37682, "n_out": 21}, {"name": "티셔츠", "n": 305, "min": 1, "wlo": 1, "q1": 13000, "median": 20000, "q3": 29000, "whi": 50000, "max": 130000, "mean": 23291, "n_out": 20}, {"name": "셔츠/블라우스", "n": 201, "min": 1, "wlo": 1, "q1": 15000, "median": 25000, "q3": 39000, "whi": 75000, "max": 200000, "mean": 30422, "n_out": 8}, {"name": "반바지", "n": 33, "min": 8500, "wlo": 8500, "q1": 20000, "median": 29000, "q3": 38000, "whi": 60000, "max": 135000, "mean": 35258, "n_out": 3}, {"name": "가디건", "n": 152, "min": 1, "wlo": 1, "q1": 23750, "median": 32000, "q3": 50000, "whi": 86000, "max": 250000, "mean": 44060, "n_out": 12}, {"name": "아우터", "n": 81, "min": 65, "wlo": 65, "q1": 30000, "median": 40000, "q3": 56000, "whi": 90000, "max": 210000, "mean": 50890, "n_out": 7}, {"name": "스커트", "n": 128, "min": 5000, "wlo": 5000, "q1": 20000, "median": 35000, "q3": 50500, "whi": 93000, "max": 250000, "mean": 42624, "n_out": 7}, {"name": "수영복", "n": 4, "min": 19000, "wlo": 19000, "q1": 27250, "median": 33000, "q3": 39500, "whi": 50000, "max": 50000, "mean": 33750, "n_out": 0}, {"name": "베스트", "n": 57, "min": 2500, "wlo": 2500, "q1": 17000, "median": 25000, "q3": 35000, "whi": 55000, "max": 100000, "mean": 30042, "n_out": 6}, {"name": "점프수트", "n": 29, "min": 111, "wlo": 111, "q1": 30000, "median": 40000, "q3": 55000, "whi": 90000, "max": 100000, "mean": 42314, "n_out": 1}, {"name": "자켓", "n": 113, "min": 3000, "wlo": 3000, "q1": 30000, "median": 45000, "q3": 70000, "whi": 120000, "max": 700000, "mean": 61790, "n_out": 7}, {"name": "니트웨어", "n": 246, "min": 1, "wlo": 1, "q1": 20000, "median": 30000, "q3": 40000, "whi": 70000, "max": 230000, "mean": 32312, "n_out": 14}, {"name": "코트", "n": 85, "min": 1, "wlo": 1, "q1": 33000, "median": 62000, "q3": 100000, "whi": 200000, "max": 400000, "mean": 79641, "n_out": 3}, {"name": "머플러/스카프", "n": 3, "min": 36000, "wlo": 36000, "q1": 40500, "median": 45000, "q3": 57000, "whi": 69000, "max": 69000, "mean": 50000, "n_out": 0}, {"name": "기타", "n": 30, "min": 1, "wlo": 1, "q1": 17500, "median": 30000, "q3": 59750, "whi": 103000, "max": 400000, "mean": 59533, "n_out": 4}, {"name": "수트", "n": 16, "min": 10000, "wlo": 10000, "q1": 20000, "median": 32500, "q3": 80000, "whi": 160000, "max": 540000, "mean": 99750, "n_out": 2}, {"name": "의류", "n": 6, "min": 20000, "wlo": 20000, "q1": 32750, "median": 37500, "q3": 55000, "whi": 60000, "max": 60000, "mean": 41167, "n_out": 0}, {"name": "잠옷", "n": 1, "min": 25000, "wlo": 25000, "q1": 25000, "median": 25000, "q3": 25000, "whi": 25000, "max": 25000, "mean": 25000, "n_out": 0}, {"name": "모자", "n": 2, "min": 80000, "wlo": 80000, "q1": 80000, "median": 80000, "q3": 80000, "whi": 80000, "max": 80000, "mean": 80000, "n_out": 0}, {"name": "가방", "n": 3, "min": 28000, "wlo": 28000, "q1": 41500, "median": 55000, "q3": 55000, "whi": 55000, "max": 55000, "mean": 46000, "n_out": 0}, {"name": "벨트", "n": 1, "min": 48000, "wlo": 48000, "q1": 48000, "median": 48000, "q3": 48000, "whi": 48000, "max": 48000, "mean": 48000, "n_out": 0}, {"name": "장갑", "n": 1, "min": 35000, "wlo": 35000, "q1": 35000, "median": 35000, "q3": 35000, "whi": 35000, "max": 35000, "mean": 35000, "n_out": 0}], "n": 2560, "median": 30000, "outliers": [{"name": "자켓", "title": "COS 레더재킷 새상품 70만원", "price": 700000}, {"name": "수트", "title": "디스퀘어드 수트 셋업 정장 디올 샤넬 코스 더로우 케이티 프라다 미우미우 에르메스", "price": 540000}, {"name": "자켓", "title": "[새상품급] 막스마라 코스탄자 울 재킷 55", "price": 429000}, {"name": "수트", "title": "COS 칼라리스 울 블렌드 블레이져 셋업 (새상품)", "price": 425000}, {"name": "코트", "title": "COS 니트 칼라 트렌치코트 라이트 베이지 36", "price": 400000}, {"name": "기타", "title": "코스플레이 란제리 💗", "price": 400000}, {"name": "코트", "title": "품절대란 COS 숏 트렌치 코트 자켓", "price": 260000}, {"name": "원피스", "title": "Costarellos(코스타렐로스) 레이스 드레스 FR38", "price": 250000}, {"name": "가디건", "title": "[새상품] 셀프포트레이트 가디건 탑 ( 산드로 마쥬 시에 자라 코스 비비안웨스트우드 로저비비에 마놀로블로닉 한섬", "price": 250000}, {"name": "가디건", "title": "알렉산더왕 가디건 ( 산드로 마쥬 이자벨마랑 시에 자라 코스 비비안웨스트우드 셀프포트레이트 한섬", "price": 250000}, {"name": "가디건", "title": "COS 캐시미어 가디건", "price": 250000}, {"name": "스커트", "title": "[새상품] 마쥬 캉캉 스커트 ( 산드로 시에 자라 코스 비비안웨스트우드 셀프포트레이트 한섬 알렉산더왕 로저비비에", "price": 250000}, {"name": "코트", "title": "COS 오버사이즈 라운드 울 코트 베이지", "price": 250000}, {"name": "기타", "title": "\"루미네 코스프레 의상 + 푸리나 화보집 판매합니다", "price": 250000}, {"name": "니트웨어", "title": "(새상품)코스 브러시드 캐시미어 100 니트 s사이즈", "price": 230000}, {"name": "원피스", "title": "티비 TIBI 롱 니트 드레스 자라 코스 알렉산더왕 맥퀸", "price": 229000}, {"name": "아우터", "title": "라코스태 여성패딩 55~66사이즈", "price": 210000}, {"name": "스커트", "title": "코스 개더드 크링클드 스커트", "price": 210000}, {"name": "셔츠/블라우스", "title": "Costume National 블라우스 40", "price": 200000}, {"name": "자켓", "title": "공홈 매장 품절인 Cos 칼라 포 시어링 재킷 아이보리, 브라운 새상품", "price": 200000}, {"name": "아우터", "title": "COS 코스 후드 패딩 조끼 다크 그레이", "price": 190000}, {"name": "원피스", "title": "알렉산더왕 아워글래스 셔츠 원피스.  발렌시아가 디온리 쟈딕앤볼테르 코스 로우클래식 자크뮈스 산드로 렉토", "price": 188000}, {"name": "아우터", "title": "코스 퀄팅 보머 재킷 패딩", "price": 180000}, {"name": "아우터", "title": "코스크퍼킬로 오버다이드 블랙집업 s", "price": 171000}, {"name": "원피스", "title": "마이클코스 원피스", "price": 150000}, {"name": "원피스", "title": "마이클코스 체크 원피스 ❤️", "price": 150000}, {"name": "원피스", "title": "(32) COS 백타이 린넨 실크 드레스", "price": 150000}, {"name": "원피스", "title": "DISSH 버블 벌룬 원피스 (cos 자라)", "price": 150000}, {"name": "원피스", "title": "COS 네이비 레이어드 니트 미니 드레스 XS", "price": 150000}, {"name": "스커트", "title": "[ 리미티드 ] 새상품 COS × Chris Perani 자카드 데님 스커트 (EUR 32)", "price": 150000}, {"name": "자켓", "title": "COS 코스 오버사이즈 퀼티드 재킷", "price": 150000}, {"name": "자켓", "title": "COS 코스 오버사이즈 퀼티드 재킷", "price": 150000}, {"name": "자켓", "title": "COS 오버사이즈 울 블렌드 스카프 재킷", "price": 150000}, {"name": "자켓", "title": "(택달린 새제품) 코스 COS 드로우스트링 웨이스트 푸퍼 재킷 XXS", "price": 150000}, {"name": "원피스", "title": "코스 실크 롱원피스(구입가 45만원대)", "price": 145000}, {"name": "가디건", "title": "(새상품) 코스 COS 하이브리드 가디건", "price": 145000}, {"name": "반바지", "title": "Cos 코스 핀턱 데님 큐롯 블루 34", "price": 135000}, {"name": "원피스", "title": "[새상품] 코스 원피스 판매합니다.", "price": 130000}, {"name": "티셔츠", "title": "알로 맨투맨 정품 새상품 스웻셔츠         룰루레몬 온러닝 새티스파이 코스 자라 유니클로", "price": 130000}, {"name": "아우터", "title": "COS 여성 아우터/잠바/잠실점 구매/새상품급", "price": 130000}, {"name": "아우터", "title": "COS 코스 니트 카라 퀼티드 점퍼 XXS", "price": 130000}, {"name": "스커트", "title": "COS라운드 메리노 울 맥시 스커트  S", "price": 130000}, {"name": "스커트", "title": "(새상품) 코스 코튼 플리츠 탑과 스커트 세트", "price": 130000}, {"name": "기타", "title": "체셔 cos 세트  팝니다(쿨거10만원)", "price": 130000}, {"name": "기타", "title": "체셔cos세트 팝니다", "price": 130000}, {"name": "원피스", "title": "COS 린넨 맥시 핑크 원피스", "price": 128000}, {"name": "니트웨어", "title": "COS 메리노 울 크루넥 스웨터 아이보리 xs", "price": 124000}, {"name": "원피스", "title": "COS 미디 원피스 (아이보리)", "price": 120000}, {"name": "가디건", "title": "[새상품] COS 코스 미니멀 니티드 브이넥 가디건", "price": 120000}, {"name": "가디건", "title": "코스 알파카 블렌드 브이넥 가디건", "price": 120000}, {"name": "스커트", "title": "cosmoss 코스모스 스커트 UNBALANCED PLEATS SKIRT", "price": 120000}, {"name": "팬츠", "title": "*마지막 가격내림* COS 코스 와이드 팬츠 (미착용, 새상품)", "price": 115000}, {"name": "셔츠/블라우스", "title": "코스 리본 타이 셔츠 (새상품)", "price": 115000}, {"name": "가디건", "title": "COS 메리노울 가디건 블랙 M/L", "price": 115000}, {"name": "팬츠", "title": "코스 cos 통바지 와이드팬츠", "price": 110000}, {"name": "팬츠", "title": "이자벨 마랑 에뚜왈 울팬츠 트라우저 코스 자라 피비아나 필리피", "price": 110000}, {"name": "원피스", "title": "씨바이끌로에 린넨 드레스 씨뉴욕 코스 자라", "price": 110000}, {"name": "원피스", "title": "(새상품) COS 코스 슬리브리스 버블 헴 미디 드레스", "price": 110000}, {"name": "가디건", "title": "COS 버건디 가디건  롱 스커트 투피스", "price": 110000}, {"name": "가디건", "title": "COS 블랙 니트 가디건 세트", "price": 110000}, {"name": "아우터", "title": "코스 여성 알파카 집업 xs 새상품", "price": 110000}, {"name": "셔츠/블라우스", "title": "pushBUTTON 스트라이프 셔츠 S 르메르 케이티 코스 자라 더로우", "price": 109000}, {"name": "원피스", "title": "새제품)코스 COS 랩 미디 셔츠 드레스 베이지 38,40사이즈", "price": 105000}, {"name": "팬츠", "title": "COS 데님 탑", "price": 103000}, {"name": "원피스", "title": "COS 신상 클래식 코튼 미니 셔츠 드레스 38 화이트", "price": 100000}, {"name": "원피스", "title": "코스 스퀘어넥 미니피나포어 원피스화이트 34", "price": 100000}, {"name": "원피스", "title": "네고 문의) COS 릴랙스드 핏 미디 셔츠 드레스 판매합니다.", "price": 100000}, {"name": "원피스", "title": "cos 트왈드주이 홀터넥 원피스 교환 저 36 - 34나 32로 교환원함", "price": 100000}, {"name": "원피스", "title": "코스cos원피스s", "price": 100000}, {"name": "원피스", "title": "코스 벨티드 셔츠드레스", "price": 100000}, {"name": "셔츠/블라우스", "title": "COS 루쳇 코튼 블라우스 라이트 그레이", "price": 100000}, {"name": "가디건", "title": "COS 브러쉬드 캐시미어 가디건 베이지 S", "price": 100000}, {"name": "스커트", "title": "COS 플리티드 코튼 리넨 미디 스커트 새상품", "price": 100000}, {"name": "베스트", "title": "코스 블랙 더블 버튼 베스트 새제품", "price": 100000}, {"name": "점프수트", "title": "코스 오렌지 점프수트", "price": 100000}, {"name": "니트웨어", "title": "코스 연그린컬러 캐시미어니트", "price": 100000}, {"name": "니트웨어", "title": "코스 COS 캐시미어100 라운드 니트 - 55~66", "price": 100000}, {"name": "니트웨어", "title": "COS 블랙 니트 🖤", "price": 100000}, {"name": "셔츠/블라우스", "title": "COS 프린티드 플루이드 셔츠(샴페인 컬러)", "price": 99000}, {"name": "팬츠", "title": "COS 여성 와이드 팬츠 베이지 34 새상품", "price": 95000}, {"name": "니트웨어", "title": "COS 옐로우 니트 M", "price": 95000}, {"name": "니트웨어", "title": "단톤니트(42) + 코스니트(S) 판매", "price": 91000}, {"name": "팬츠", "title": "Cos 울 베럴 레그 트라우저 34", "price": 90000}, {"name": "팬츠", "title": "COS 린넨 카고 팬츠", "price": 90000}, {"name": "팬츠", "title": "Cost per Kilo 블랙 카고바지 M", "price": 90000}, {"name": "티셔츠", "title": "코스 캐시미어 반팔 니트 xs", "price": 90000}, {"name": "셔츠/블라우스", "title": "마인 바스락 블라우스     코스 한섬 더캐시미어 타임 마인 랑방 산드로 마쥬 시에 어라운드율 보웬 비니터 플리츠", "price": 90000}, {"name": "반바지", "title": "COS 린넨 핀턱 반바지", "price": 90000}, {"name": "가디건", "title": "Cos 코스크롭 캐시미어가디건 xs (마른55) size", "price": 90000}, {"name": "가디건", "title": "[새상품] COS 코스 웨이스트 울 브이넥 가디건 아이보리 L", "price": 90000}, {"name": "니트웨어", "title": "Cos 회색니트 XS", "price": 90000}, {"name": "니트웨어", "title": "[새상품]COS 코스 드레이프 메리노 울 브이넥 스웨터 베이지 멜란지 L", "price": 90000}, {"name": "티셔츠", "title": "COS 투톤 청키 니티드 슬리브리스 탑", "price": 89000}, {"name": "니트웨어", "title": "(택있는 새상품) COS 코스 트위스트 디테일 코튼 탑 네이비 XS", "price": 89000}, {"name": "팬츠", "title": "cos 크롭 울 배럴 레그 트라우저", "price": 88000}, {"name": "베스트", "title": "COS 퍼넬넥 울 니트 베스트 블랙 XS", "price": 86000}, {"name": "티셔츠", "title": "코스 페프럼 스쿠버 슬리브리스 탑", "price": 85000}, {"name": "니트웨어", "title": "COS 코스 어드저스터블 튜닉 스타일 탑 네이비 38사이즈", "price": 85000}, {"name": "팬츠", "title": "COS BAY 배럴 레그 진 블랙 27사이즈 새제품", "price": 81000}, {"name": "팬츠", "title": "COS 데님", "price": 80000}, {"name": "티셔츠", "title": "택있는 새상품) 코스 COS 트위스트 백 슬리브리스 탑", "price": 80000}, {"name": "티셔츠", "title": "메종키츠네 티셔츠 새상품 정품          아미 폴로 코스 아르켓 산드로 마쥬 단톤 마르디", "price": 80000}, {"name": "셔츠/블라우스", "title": "코스 퍼프 슬리브 블라우스(새상품)", "price": 80000}, {"name": "셔츠/블라우스", "title": "COS 그린 오프숄더 블라우스", "price": 80000}, {"name": "베스트", "title": "COS 울 후디드 베스트", "price": 80000}, {"name": "베스트", "title": "COS 숄 cotton wool 베스트  새상태급", "price": 80000}, {"name": "니트웨어", "title": "코스 라운드 리브드 저지 헨리 탑", "price": 80000}, {"name": "니트웨어", "title": "COS 실크 새틴 카프탄 스타일 탑 블랙 32(새상품)", "price": 80000}, {"name": "니트웨어", "title": "COS 100% 캐시미어 오렌지색 니트", "price": 80000}, {"name": "팬츠", "title": "COS  크롭 코듀로이 팬츠 36사이즈", "price": 79000}, {"name": "반바지", "title": "COS 플리티드 벨티드 리넨 쇼츠 블랙 34 새상품", "price": 78000}, {"name": "팬츠", "title": "COS 루즈 스트레이트 화이트데님 26", "price": 75000}, {"name": "팬츠", "title": "COS 블랙 크롭 코듀로이 팬츠", "price": 71000}, {"name": "팬츠", "title": "[새상품]COS 브라운 와이드 팬츠 EUR 34", "price": 71000}, {"name": "팬츠", "title": "COS 코듀로이 와이드 팬츠", "price": 70000}, {"name": "팬츠", "title": "COS 코스 TIDE 와이드 레그 진 24(단종)", "price": 70000}, {"name": "팬츠", "title": "COS 플리츠 트라우저 팬츠 XS", "price": 70000}, {"name": "티셔츠", "title": "COS 코스 튜블라 니트 탱크탑 아이보리(새제품)", "price": 70000}, {"name": "베스트", "title": "코스 레드 니트퍼베스트", "price": 70000}, {"name": "티셔츠", "title": "코스 반팔 니트 s", "price": 65000}, {"name": "티셔츠", "title": "코스 트위스트백 슬리브리스 탑 34 새상품", "price": 65000}, {"name": "베스트", "title": "COS 여성 베스트 아이보리", "price": 65000}, {"name": "티셔츠", "title": "COS 타월링 폴로니트 xs", "price": 60000}, {"name": "티셔츠", "title": "코스 딥다이 홀터넥 슬리브리스 32", "price": 60000}, {"name": "티셔츠", "title": "이번주까지만 판매!!COS 화이트 텍스처 반팔 셔츠 S", "price": 60000}, {"name": "티셔츠", "title": "Cos 린넨 반팔셔츠 택제거 새상품 32사이즈", "price": 60000}, {"name": "티셔츠", "title": "코스 포인텔 니트티셔츠", "price": 60000}, {"name": "티셔츠", "title": "COS 코스 반팔털니트", "price": 60000}, {"name": "티셔츠", "title": "Cos 린넨 반팔셔츠 택제거 새상품 32사이즈", "price": 60000}, {"name": "티셔츠", "title": "cos  리브드 니트 실크 티셔츠", "price": 60000}, {"name": "티셔츠", "title": "COS 코스 라이트 그린 박시 폴로 셔츠", "price": 59000}, {"name": "티셔츠", "title": "코스 반팔티셔츠 s사이즈", "price": 58000}, {"name": "티셔츠", "title": "COS 스트라이프 티셔츠", "price": 55000}], "n_outliers_total": 133}};
+
+function won(v){
+  if (v >= 10000) {
+    const man = v/10000;
+    return (Number.isInteger(man) ? man : man.toFixed(1)) + '만원';
+  }
+  return v.toLocaleString('ko-KR') + '원';
+}
+function wonFull(v){ return v.toLocaleString('ko-KR') + '원'; }
+
+function niceMax(v){
+  const steps = [50000,100000,150000,200000,300000,500000,800000,1200000,2000000,3000000];
+  for (const s of steps) if (v <= s) return s;
+  return Math.ceil(v/1000000)*1000000;
+}
+
+function renderChart(containerId, items){
+  const rowH = 30, padTop = 8, padBottom = 26, leftPad = 150, rightPad = 54;
+  const width = 860;
+  const domainMin = 3000;
+  const maxWhi = Math.max(...items.map(d => Math.max(d.whi, d.q3)));
+  const domainMax = niceMax(maxWhi * 1.08);
+  const plotW = width - leftPad - rightPad;
+  const height = items.length * rowH + padTop + padBottom;
+
+  const lx = Math.log10(domainMin), lX = Math.log10(domainMax);
+  const xs = v => leftPad + (Math.log10(Math.max(v,domainMin)) - lx) / (lX - lx) * plotW;
+
+  const ticks = [3000,10000,30000,100000,300000,1000000,3000000].filter(t => t >= domainMin && t <= domainMax);
+
+  let svg = `<svg class="rangechart" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">`;
+
+  ticks.forEach(t => {
+    const x = xs(t);
+    svg += `<line class="gridline" x1="${x}" y1="${padTop-2}" x2="${x}" y2="${height-padBottom+2}"/>`;
+    svg += `<text class="axis-label" x="${x}" y="${height-padBottom+16}" text-anchor="middle">${won(t)}</text>`;
+  });
+
+  items.forEach((d, i) => {
+    const y = padTop + i*rowH + rowH/2;
+    const boxTop = y - 7, boxH = 14;
+    const xWlo = xs(d.wlo), xQ1 = xs(d.q1), xMed = xs(d.median), xQ3 = xs(d.q3), xWhi = xs(d.whi);
+
+    svg += `<text class="row-label" x="${leftPad-10}" y="${y+4}" text-anchor="end">${d.name} <tspan class="row-n">· ${d.n}건</tspan></text>`;
+
+    svg += `<line class="whisker" x1="${xWlo}" y1="${y}" x2="${xQ1}" y2="${y}"/>`;
+    svg += `<line class="whisker" x1="${xQ3}" y1="${y}" x2="${xWhi}" y2="${y}"/>`;
+    svg += `<line class="whisker" x1="${xWlo}" y1="${y-5}" x2="${xWlo}" y2="${y+5}"/>`;
+    svg += `<line class="whisker" x1="${xWhi}" y1="${y-5}" x2="${xWhi}" y2="${y+5}"/>`;
+
+    svg += `<rect class="box" x="${Math.min(xQ1,xQ3)}" y="${boxTop}" width="${Math.max(Math.abs(xQ3-xQ1),1.5)}" height="${boxH}" rx="3"/>`;
+    svg += `<line class="median-tick" x1="${xMed}" y1="${boxTop-1}" x2="${xMed}" y2="${boxTop+boxH+1}"/>`;
+
+    const labelRight = xWhi + 8;
+    const fits = labelRight + 60 < width - 4;
+    svg += `<text class="medlabel" x="${fits ? labelRight : xMed}" y="${y+4}" text-anchor="${fits ? 'start' : 'middle'}" ${fits ? '' : `dy="-14"`}>${won(d.median)}</text>`;
+
+    svg += `<rect class="hit" data-idx="${i}" x="${leftPad}" y="${padTop+i*rowH}" width="${plotW+rightPad-10}" height="${rowH}"/>`;
+  });
+
+  svg += `</svg>`;
+  const el = document.getElementById(containerId);
+  el.innerHTML = `<div class="chart-scroll">${svg}</div>`;
+
+  const tooltip = document.getElementById('tooltip');
+  el.querySelectorAll('.hit').forEach(hit => {
+    const d = items[+hit.dataset.idx];
+    hit.addEventListener('mousemove', e => {
+      tooltip.innerHTML = `<b>${d.name}</b> · ${d.n}건<br>`
+        + `최저 ${wonFull(d.min)} · 정상범위 ${wonFull(d.wlo)}~${wonFull(d.whi)}<br>`
+        + `Q1 ${wonFull(d.q1)} · 중앙값 ${wonFull(d.median)} · Q3 ${wonFull(d.q3)}<br>`
+        + `최고 ${wonFull(d.max)}${d.n_out ? ` (이상치 ${d.n_out}건 포함)` : ''}`;
+      tooltip.style.left = e.clientX + 'px';
+      tooltip.style.top = e.clientY + 'px';
+      tooltip.classList.add('show');
+    });
+    hit.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+  });
+}
+
+function renderTable(tableId, items){
+  const cols = [
+    ['name','아이템'], ['n','건수'], ['min','최저가'], ['q1','Q1'],
+    ['median','중앙값'], ['q3','Q3'], ['max','최고가'], ['mean','평균가']
+  ];
+  let html = '<thead><tr>' + cols.map(c => `<th>${c[1]}</th>`).join('') + '</tr></thead><tbody>';
+  items.forEach(d => {
+    html += '<tr>' + cols.map(([k]) => {
+      if (k === 'name') return `<td class="name">${d[k]}</td>`;
+      if (k === 'n') return `<td class="num">${d[k]}</td>`;
+      if (k === 'median') return `<td class="num median-cell">${wonFull(d[k])}</td>`;
+      return `<td class="num">${wonFull(d[k])}</td>`;
+    }).join('') + '</tr>';
+  });
+  html += '</tbody>';
+  document.getElementById(tableId).innerHTML = html;
+}
+
+function renderOutliers(containerId, outliers){
+  const el = document.getElementById(containerId);
+  if (!outliers.length){
+    el.innerHTML = '<div class="filter-empty">선택된 아이템이 없습니다. 필터에서 항목을 선택해 주세요.</div>';
+    return;
+  }
+  el.innerHTML = outliers.map(o =>
+    `<div class="outlier-row"><span class="t"><span class="c">${o.name}</span> ${o.title}</span><span class="p num">${wonFull(o.price)}</span></div>`
+  ).join('');
+}
+
+// ---- 고가 이상치 전용 아이템별 필터 (차트/표에는 영향 없음) ----
+function setupOutlierFilter(sectionKey, filterBarId, statusId, outlierListId){
+  const allOutliers = DATA[sectionKey].outliers;
+  // 이상치가 실제로 존재하는 아이템만 필터 칩으로 노출 (첫 등장 순서 유지)
+  const categories = [];
+  allOutliers.forEach(o => { if (!categories.includes(o.name)) categories.push(o.name); });
+
+  let active = new Set(categories);
+
+  const bar = document.getElementById(filterBarId);
+
+  const resetChip = document.createElement('span');
+  resetChip.className = 'outlier-filter-chip reset';
+  resetChip.textContent = '전체 보기';
+  resetChip.addEventListener('click', () => {
+    active = new Set(categories);
+    refresh();
+  });
+
+  categories.forEach(cat => {
+    const n = allOutliers.filter(o => o.name === cat).length;
+    const chip = document.createElement('span');
+    chip.className = 'outlier-filter-chip active';
+    chip.dataset.cat = cat;
+    chip.innerHTML = `${cat} <span class="n">${n}</span>`;
+    chip.addEventListener('click', () => {
+      if (active.has(cat)) { active.delete(cat); } else { active.add(cat); }
+      refresh();
+    });
+    bar.appendChild(chip);
+  });
+  bar.appendChild(resetChip);
+
+  function refresh(){
+    bar.querySelectorAll('.outlier-filter-chip[data-cat]').forEach(chip => {
+      chip.classList.toggle('active', active.has(chip.dataset.cat));
+    });
+    const filtered = allOutliers.filter(o => active.has(o.name));
+    renderOutliers(outlierListId, filtered);
+    document.getElementById(statusId).textContent =
+      `전체 ${allOutliers.length}건 중 ${filtered.length}건 표시`;
+  }
+
+  refresh();
+}
+
+document.getElementById('m-bag-n').textContent = DATA.bags.n.toLocaleString('ko-KR');
+document.getElementById('m-cloth-n').textContent = DATA.clothes.n.toLocaleString('ko-KR');
+document.getElementById('bag-tag').textContent = DATA.bags.n.toLocaleString('ko-KR') + '건';
+document.getElementById('cloth-tag').textContent = DATA.clothes.n.toLocaleString('ko-KR') + '건';
+document.getElementById('bag-median').textContent = wonFull(DATA.bags.median);
+document.getElementById('cloth-median').textContent = wonFull(DATA.clothes.median);
+document.getElementById('out-bags-count').textContent = DATA.bags.n_outliers_total;
+document.getElementById('out-clothes-count').textContent = DATA.clothes.n_outliers_total;
+
+renderChart('chart-bags', DATA.bags.items);
+renderChart('chart-clothes', DATA.clothes.items);
+renderTable('table-bags', DATA.bags.items);
+renderTable('table-clothes', DATA.clothes.items);
+
+setupOutlierFilter('bags', 'outlier-filter-bags', 'outlier-filter-status-bags', 'outlier-bags');
+setupOutlierFilter('clothes', 'outlier-filter-clothes', 'outlier-filter-status-clothes', 'outlier-clothes');
+
+// Dashboard overview values
+const totalN = DATA.bags.n + DATA.clothes.n;
+const totalOutliers = DATA.bags.n_outliers_total + DATA.clothes.n_outliers_total;
+const totalEl = document.getElementById('total-n');
+const outlierEl = document.getElementById('total-outliers');
+if (totalEl) totalEl.textContent = totalN.toLocaleString('ko-KR');
+if (outlierEl) outlierEl.textContent = totalOutliers.toLocaleString('ko-KR');
+</script>
+</body>
+</html>

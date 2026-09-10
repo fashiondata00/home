@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COS Bag Type Analytics Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#edf0f7;
+    --surface:rgba(255,255,255,.74);
+    --surface-strong:#f9fbff;
+    --text:#262d46;
+    --text-2:#5f6980;
+    --muted:#929bad;
+    --line:rgba(49,61,91,.10);
+    --line-strong:rgba(49,61,91,.17);
+
+    --blue:#72a8e8;
+    --blue-deep:#4f82c5;
+    --blue-soft:rgba(114,168,232,.14);
+    --mint:#67c8b4;
+    --mint-deep:#45a990;
+    --mint-soft:rgba(103,200,180,.14);
+    --danger:#d66f72;
+    --danger-soft:rgba(214,111,114,.11);
+
+    --shadow-sm:0 10px 30px rgba(42,52,82,.055);
+    --shadow-md:0 18px 50px rgba(42,52,82,.08);
+    --shadow-orb:0 16px 30px rgba(55,72,111,.20);
+
+    --radius-sm:12px;
+    --radius-md:18px;
+    --radius-lg:24px;
+    --radius-xl:32px;
+    --sidebar:238px;
+    --ease:180ms ease;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    min-height:100vh;
+    color:var(--text);
+    background:
+      radial-gradient(circle at 12% 12%, rgba(255,255,255,.75), transparent 27%),
+      radial-gradient(circle at 92% 8%, rgba(255,255,255,.50), transparent 24%),
+      linear-gradient(145deg, #eef1f8 0%, #ebeff7 46%, #f0f2f8 100%);
+    font-family:"Noto Sans KR","Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    line-height:1.5;
+  }
+
+  a{color:inherit;text-decoration:none;}
+  .num{
+    font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-variant-numeric:tabular-nums;
+  }
+
+  .app-shell{
+    width:min(1560px,100%);
+    min-height:100vh;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:var(--sidebar) minmax(0,1fr);
+  }
+
+  /* Sidebar */
+  .sidebar{
+    position:sticky;
+    top:0;
+    height:100vh;
+    padding:30px 22px 26px;
+    display:flex;
+    flex-direction:column;
+    border-right:1px solid var(--line);
+    background:rgba(239,242,248,.66);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    z-index:20;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:42px;
+  }
+  .brand-mark{
+    width:40px;height:40px;position:relative;flex:0 0 auto;
+  }
+  .brand-mark::before,.brand-mark::after{
+    content:"";
+    position:absolute;
+    border-radius:50%;
+  }
+  .brand-mark::before{
+    width:30px;height:30px;left:1px;top:1px;
+    border:6px solid rgba(114,168,232,.24);
+    box-shadow:inset 0 2px 8px rgba(255,255,255,.8);
+  }
+  .brand-mark::after{
+    width:14px;height:14px;right:0;bottom:1px;
+    background:var(--mint);
+    box-shadow:0 7px 14px rgba(80,150,136,.22);
+  }
+  .brand-name{
+    font-family:"Manrope","Noto Sans KR",sans-serif;
+    font-size:13px;
+    font-weight:800;
+    letter-spacing:.04em;
+  }
+  .brand-sub{
+    margin-top:2px;
+    color:var(--muted);
+    font-size:10px;
+    letter-spacing:.10em;
+    text-transform:uppercase;
+  }
+  .nav-label{
+    margin:0 0 10px 10px;
+    color:#abb2c2;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+  }
+  .side-nav{display:grid;gap:6px;}
+  .nav-item{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    min-height:44px;
+    padding:0 12px;
+    border-radius:13px;
+    color:var(--text-2);
+    font-size:13px;
+    font-weight:600;
+    transition:background var(--ease),color var(--ease),transform var(--ease);
+  }
+  .nav-item:hover{
+    background:rgba(255,255,255,.58);
+    color:var(--text);
+    transform:translateX(2px);
+  }
+  .nav-item.active{
+    color:var(--text);
+    background:rgba(255,255,255,.76);
+    box-shadow:var(--shadow-sm);
+  }
+  .nav-icon{
+    width:26px;height:26px;
+    display:grid;place-items:center;
+    border-radius:9px;
+    color:var(--blue-deep);
+    background:var(--blue-soft);
+    font-family:"IBM Plex Mono",monospace;
+    font-size:10px;
+    font-weight:600;
+  }
+  .nav-item:nth-child(3) .nav-icon{
+    color:var(--mint-deep);
+    background:var(--mint-soft);
+  }
+  .sidebar-foot{
+    margin-top:auto;
+    padding:18px 14px;
+    border:1px solid var(--line);
+    border-radius:18px;
+    background:rgba(255,255,255,.38);
+  }
+  .sidebar-foot strong{
+    display:block;
+    margin-bottom:5px;
+    font-size:11px;
+    letter-spacing:.03em;
+  }
+  .sidebar-foot p{
+    margin:0;
+    color:var(--muted);
+    font-size:10.5px;
+    line-height:1.65;
+  }
+
+  /* Main */
+  .main{
+    min-width:0;
+    padding:28px clamp(28px,4vw,64px) 54px;
+  }
+  .topbar{
+    height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:20px;
+    color:var(--muted);
+    font-size:10.5px;
+    font-weight:700;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+  }
+  .topbar-right{display:flex;align-items:center;gap:9px;}
+  .status-dot{
+    width:8px;height:8px;border-radius:50%;background:var(--mint);
+    box-shadow:0 0 0 5px var(--mint-soft);
+  }
+
+  /* Hero */
+  .hero{
+    position:relative;
+    min-height:300px;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    padding:46px clamp(32px,5vw,72px);
+    border:1px solid rgba(255,255,255,.62);
+    border-radius:var(--radius-xl);
+    background:linear-gradient(145deg,rgba(255,255,255,.72),rgba(247,249,253,.52));
+    box-shadow:var(--shadow-md);
+    isolation:isolate;
+  }
+  .hero::before,.hero::after{
+    content:"";
+    position:absolute;
+    border-radius:50%;
+    pointer-events:none;
+    z-index:-1;
+  }
+  .hero::before{
+    width:300px;height:300px;
+    right:7%;top:-46px;
+    border:30px solid rgba(255,255,255,.53);
+    box-shadow:inset 0 0 24px rgba(117,130,160,.06),0 5px 28px rgba(88,100,132,.08);
+  }
+  .hero::after{
+    width:230px;height:230px;
+    left:-115px;bottom:-80px;
+    border:28px solid rgba(255,255,255,.45);
+    box-shadow:0 8px 25px rgba(88,100,132,.06);
+  }
+  .hero-copy{
+    position:relative;
+    z-index:2;
+    width:min(760px,78%);
+  }
+  .hero-kicker{
+    margin-bottom:14px;
+    color:var(--text);
+    font-family:"Manrope","Noto Sans KR",sans-serif;
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  .hero h1{
+    margin:0;
+    max-width:820px;
+    font-family:"Manrope","Noto Sans KR",sans-serif;
+    font-size:clamp(38px,5vw,66px);
+    line-height:.98;
+    letter-spacing:-.045em;
+    font-weight:800;
+    color:var(--text);
+  }
+  .hero h1 span{display:block;}
+  .hero p{
+    max-width:700px;
+    margin:22px 0 0;
+    color:var(--text-2);
+    font-size:14px;
+    line-height:1.8;
+  }
+  .hero-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:24px;
+  }
+  .hero-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    min-height:34px;
+    padding:0 12px;
+    border:1px solid rgba(255,255,255,.75);
+    border-radius:999px;
+    background:rgba(255,255,255,.55);
+    color:var(--text-2);
+    font-size:11px;
+    font-weight:600;
+    box-shadow:0 4px 16px rgba(70,82,115,.04);
+  }
+  .hero-chip i{
+    width:7px;height:7px;border-radius:50%;background:var(--blue);display:block;
+  }
+  .hero-chip:nth-child(2) i{background:var(--mint);}
+  .orb{
+    position:absolute;
+    z-index:1;
+    border-radius:50%;
+    box-shadow:var(--shadow-orb);
+  }
+  .orb-blue{
+    width:78px;height:78px;
+    right:28%;top:55px;
+    background:linear-gradient(145deg,#84b5ee,#6da3e4);
+  }
+  .orb-mint{
+    width:104px;height:104px;
+    right:12%;bottom:30px;
+    background:linear-gradient(145deg,#77d1bd,#61c5ae);
+  }
+  .ring-small{
+    position:absolute;
+    right:-58px;
+    bottom:-76px;
+    width:180px;height:180px;
+    border:24px solid rgba(255,255,255,.50);
+    border-radius:50%;
+    box-shadow:0 6px 26px rgba(88,100,132,.06);
+  }
+
+  /* KPIs */
+  .kpi-grid{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:14px;
+    margin:20px 0 42px;
+  }
+  .kpi-card{
+    position:relative;
+    overflow:hidden;
+    min-height:128px;
+    padding:20px 20px 17px;
+    border:1px solid rgba(255,255,255,.72);
+    border-radius:var(--radius-lg);
+    background:rgba(255,255,255,.63);
+    box-shadow:var(--shadow-sm);
+    transition:transform var(--ease),box-shadow var(--ease),background var(--ease);
+  }
+  .kpi-card:hover{
+    transform:translateY(-2px);
+    background:rgba(255,255,255,.82);
+    box-shadow:var(--shadow-md);
+  }
+  .kpi-card::after{
+    content:"";
+    position:absolute;
+    width:64px;height:64px;
+    right:-18px;top:-20px;
+    border-radius:50%;
+    border:12px solid var(--blue-soft);
+  }
+  .kpi-card.mint::after{border-color:var(--mint-soft);}
+  .kpi-label{
+    color:var(--muted);
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.11em;
+    text-transform:uppercase;
+  }
+  .kpi-value{
+    margin-top:11px;
+    font-family:"Manrope","Noto Sans KR",sans-serif;
+    font-size:clamp(24px,2.3vw,34px);
+    line-height:1;
+    font-weight:800;
+    letter-spacing:-.035em;
+    color:var(--text);
+  }
+  .kpi-note{margin-top:10px;color:var(--text-2);font-size:10.5px;}
+  .kpi-line{
+    width:34px;height:3px;border-radius:999px;
+    margin-top:12px;background:var(--blue);
+  }
+  .kpi-card.mint .kpi-line{background:var(--mint);}
+
+  .content-heading{
+    display:flex;
+    align-items:end;
+    justify-content:space-between;
+    gap:24px;
+    margin-bottom:18px;
+  }
+  .content-heading .small{
+    color:var(--blue-deep);
+    font-family:"Manrope",sans-serif;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.15em;
+    text-transform:uppercase;
+  }
+  .content-heading h2{
+    margin:5px 0 0;
+    font-family:"Manrope","Noto Sans KR",sans-serif;
+    font-size:25px;
+    letter-spacing:-.025em;
+  }
+  .content-heading p{
+    max-width:520px;
+    margin:0;
+    color:var(--muted);
+    font-size:11.5px;
+    line-height:1.7;
+    text-align:right;
+  }
+
+  /* Dataset sections */
+  section.dataset{
+    margin-top:18px;
+    padding:26px;
+    border:1px solid rgba(255,255,255,.76);
+    border-radius:var(--radius-xl);
+    background:rgba(255,255,255,.57);
+    box-shadow:var(--shadow-sm);
+    scroll-margin-top:24px;
+  }
+  section.dataset + section.dataset{margin-top:24px;}
+  .dataset-head{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:18px;
+    margin-bottom:18px;
+  }
+  .dataset-title-wrap{min-width:0;}
+  .dataset-index{
+    display:block;
+    margin-bottom:5px;
+    color:var(--muted);
+    font-family:"IBM Plex Mono",monospace;
+    font-size:10px;
+    letter-spacing:.09em;
+  }
+  .dataset-head h2{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+    margin:0;
+    font-family:"Manrope","Noto Sans KR",sans-serif;
+    font-size:24px;
+    font-weight:800;
+    letter-spacing:-.03em;
+  }
+  .dataset-tag{
+    display:inline-flex;
+    align-items:center;
+    min-height:26px;
+    padding:0 10px;
+    border-radius:999px;
+    background:var(--blue-soft);
+    color:var(--blue-deep);
+    font-family:"IBM Plex Mono",monospace;
+    font-size:10px;
+    font-weight:600;
+  }
+  .dataset-description{
+    max-width:430px;
+    color:var(--muted);
+    font-size:11px;
+    text-align:right;
+  }
+
+  /* Subtype filter */
+  .filter-bar{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:8px;
+    margin-bottom:16px;
+    padding:14px 16px;
+    border:1px solid var(--line);
+    border-radius:16px;
+    background:rgba(255,255,255,.5);
+  }
+  .filter-label{
+    margin-right:2px;
+    color:var(--muted);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.10em;
+    text-transform:uppercase;
+    flex:0 0 auto;
+  }
+  .filter-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    min-height:30px;
+    padding:0 12px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    background:rgba(255,255,255,.7);
+    color:var(--text-2);
+    font-size:11px;
+    font-weight:600;
+    cursor:pointer;
+    user-select:none;
+    transition:background var(--ease),color var(--ease),border-color var(--ease),transform var(--ease);
+  }
+  .filter-chip:hover{background:#fff;transform:translateY(-1px);}
+  .filter-chip .n{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:9.5px;
+    color:var(--muted);
+  }
+  .filter-chip.active{
+    border-color:var(--blue);
+    background:var(--blue);
+    color:#fff;
+  }
+  .filter-chip.active .n{color:rgba(255,255,255,.82);}
+  .filter-chip.reset{
+    border-style:dashed;
+    border-color:var(--line-strong);
+    color:var(--blue-deep);
+    font-weight:700;
+    margin-left:auto;
+  }
+  .filter-chip.reset:hover{background:var(--blue-soft);}
+  .filter-empty{
+    padding:34px 12px;
+    text-align:center;
+    color:var(--muted);
+    font-size:12px;
+  }
+
+  .chart-card{
+    overflow:hidden;
+    padding:18px 18px 10px;
+    border:1px solid var(--line);
+    border-radius:22px;
+    background:rgba(250,251,254,.88);
+  }
+  .chart-legend{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:10px;
+    padding:0 2px 14px;
+    border-bottom:1px solid var(--line);
+  }
+  .chart-legend .item{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    min-height:28px;
+    padding:0 9px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    background:rgba(255,255,255,.72);
+    color:var(--muted);
+    font-size:9.5px;
+    font-weight:600;
+  }
+  .lg-box{width:14px;height:9px;background:var(--blue-soft);border:1.5px solid var(--blue);border-radius:3px;}
+  .lg-line{width:14px;height:0;border-top:1.5px solid var(--blue);}
+  .lg-dot{width:7px;height:7px;border-radius:50%;background:var(--blue);}
+  .lg-out{width:7px;height:7px;border-radius:50%;background:var(--danger);}
+
+  .chart-scroll{
+    overflow-x:auto;
+    overflow-y:hidden;
+    padding:6px 2px 5px;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(85,100,130,.25) transparent;
+  }
+  svg.rangechart{
+    display:block;
+    width:100%;
+    min-width:860px;
+    max-width:none;
+    height:auto;
+    overflow:visible;
+  }
+  .row-label{font-size:12px;fill:var(--text-2);font-weight:700;}
+  .row-n{font-size:9.8px;fill:var(--muted);font-family:"IBM Plex Mono",monospace;font-weight:500;}
+  .gridline{stroke:rgba(69,82,111,.11);stroke-width:1;}
+  .axis-label{font-size:9.5px;fill:var(--muted);font-family:"IBM Plex Mono",monospace;}
+  .whisker{stroke:var(--blue);stroke-width:1.5;}
+  .box{fill:var(--blue-soft);stroke:var(--blue);stroke-width:1.5;rx:4;}
+  .median-tick{stroke:var(--blue-deep);stroke-width:2.5;}
+  .medlabel{font-size:10.5px;font-weight:700;fill:var(--blue-deep);font-family:"IBM Plex Mono",monospace;}
+  .outlier-dot{fill:var(--danger);opacity:.88;}
+  .hit{fill:transparent;cursor:pointer;}
+
+  .tooltip{
+    position:fixed;
+    pointer-events:none;
+    z-index:100;
+    opacity:0;
+    transform:translate(-50%,calc(-100% - 12px));
+    max-width:min(360px,calc(100vw - 24px));
+    padding:10px 13px;
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:11px;
+    background:#252d45;
+    color:#f6f8fc;
+    box-shadow:0 16px 36px rgba(28,36,58,.26);
+    font-family:"IBM Plex Mono",monospace;
+    font-size:10.5px;
+    line-height:1.6;
+    white-space:nowrap;
+    transition:opacity 120ms ease;
+  }
+  .tooltip b{
+    color:#fff;
+    font-family:"Noto Sans KR",sans-serif;
+    font-weight:700;
+  }
+  .tooltip.show{opacity:1;}
+
+  details.table-toggle{
+    margin-top:12px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    border-radius:17px;
+    background:rgba(255,255,255,.46);
+    transition:background var(--ease),border-color var(--ease);
+  }
+  details.table-toggle[open]{
+    background:rgba(255,255,255,.72);
+    border-color:var(--line-strong);
+  }
+  details.table-toggle > summary{
+    list-style:none;
+    cursor:pointer;
+    user-select:none;
+    min-height:48px;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:0 15px;
+    color:var(--text-2);
+    font-size:11px;
+    font-weight:700;
+    transition:color var(--ease),background var(--ease);
+  }
+  details.table-toggle > summary:hover{
+    color:var(--text);
+    background:rgba(255,255,255,.55);
+  }
+  details.table-toggle > summary::-webkit-details-marker{display:none;}
+  details.table-toggle > summary::before{
+    content:"";
+    width:8px;height:8px;
+    border-right:1.8px solid var(--blue-deep);
+    border-bottom:1.8px solid var(--blue-deep);
+    transform:rotate(-45deg);
+    transition:transform var(--ease);
+    margin-right:2px;
+  }
+  details.table-toggle[open] > summary::before{transform:rotate(45deg);}
+
+  .tablewrap{
+    overflow:auto;
+    margin:0 12px 12px;
+    border:1px solid var(--line);
+    border-radius:13px;
+    background:rgba(255,255,255,.74);
+    max-height:520px;
+  }
+  table{
+    width:100%;
+    min-width:680px;
+    border-collapse:separate;
+    border-spacing:0;
+    font-size:11px;
+  }
+  thead th{
+    position:sticky;
+    top:0;
+    z-index:2;
+    padding:10px 12px;
+    text-align:right;
+    white-space:nowrap;
+    border-bottom:1px solid var(--line-strong);
+    background:#f1f4f9;
+    color:var(--muted);
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  thead th:first-child,tbody td:first-child{text-align:left;}
+  tbody td{
+    padding:10px 12px;
+    text-align:right;
+    white-space:nowrap;
+    border-bottom:1px solid rgba(49,61,91,.075);
+    color:var(--text-2);
+    transition:background var(--ease),color var(--ease);
+  }
+  tbody tr:last-child td{border-bottom:0;}
+  tbody tr:hover td{
+    background:rgba(114,168,232,.06);
+    color:var(--text);
+  }
+  td.name{font-weight:700;color:var(--text);}
+  td.median-cell{
+    color:var(--blue-deep);
+    font-weight:700;
+    background:rgba(114,168,232,.055);
+  }
+
+  .outlier-list{
+    display:flex;
+    flex-direction:column;
+    margin:0 14px 4px;
+    max-height:520px;
+    overflow-y:auto;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(85,100,130,.25) transparent;
+  }
+  .outlier-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    min-height:42px;
+    padding:8px 3px;
+    border-bottom:1px solid var(--line);
+    font-size:10.8px;
+  }
+  .outlier-row:last-child{border-bottom:0;}
+  .outlier-row .t{
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    color:var(--text-2);
+  }
+  .outlier-row .p{
+    flex:0 0 auto;
+    padding:5px 8px;
+    border-radius:8px;
+    background:var(--danger-soft);
+    color:var(--danger);
+    font-weight:700;
+    font-size:9.8px;
+  }
+  .outlier-row .c{
+    display:inline-block;
+    margin-right:8px;
+    padding:3px 6px;
+    border-radius:6px;
+    background:rgba(80,92,120,.07);
+    color:var(--muted);
+    font-size:9px;
+  }
+  .note{
+    margin:10px 14px 14px;
+    padding:12px 13px;
+    border-left:3px solid rgba(114,168,232,.45);
+    border-radius:4px 10px 10px 4px;
+    background:rgba(114,168,232,.055);
+    color:var(--muted);
+    font-size:10px;
+    line-height:1.7;
+  }
+  footer{
+    margin-top:30px;
+    padding:18px 4px 0;
+    border-top:1px solid var(--line);
+    color:var(--muted);
+    font-size:9.5px;
+    line-height:1.75;
+  }
+
+  a:focus-visible,summary:focus-visible{
+    outline:3px solid rgba(114,168,232,.30);
+    outline-offset:3px;
+    border-radius:10px;
+  }
+
+  @media (max-width:1180px){
+    :root{--sidebar:200px;}
+    .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .hero-copy{width:min(720px,72%);}
+    .orb-blue{right:23%;}
+  }
+  @media (max-width:880px){
+    .app-shell{display:block;}
+    .sidebar{
+      position:relative;
+      width:100%;
+      height:auto;
+      padding:16px 20px;
+      border-right:0;
+      border-bottom:1px solid var(--line);
+    }
+    .brand{margin:0 0 12px;}
+    .brand-mark{width:34px;height:34px;}
+    .brand-mark::before{width:26px;height:26px;border-width:5px;}
+    .brand-mark::after{width:12px;height:12px;}
+    .nav-label,.sidebar-foot{display:none;}
+    .side-nav{
+      display:flex;
+      overflow-x:auto;
+      padding-bottom:2px;
+    }
+    .nav-item{min-width:max-content;}
+    .main{padding:18px 20px 42px;}
+    .topbar{margin-bottom:14px;}
+    .hero{min-height:300px;padding:36px 28px;}
+    .hero-copy{width:88%;}
+    .orb-blue{right:14%;top:42px;width:64px;height:64px;}
+    .orb-mint{right:5%;width:82px;height:82px;}
+    .content-heading{align-items:flex-start;flex-direction:column;}
+    .content-heading p{text-align:left;}
+  }
+  @media (max-width:620px){
+    .topbar{font-size:9px;}
+    .topbar > span:first-child{display:none;}
+    .hero{
+      min-height:365px;
+      align-items:flex-start;
+      padding:34px 22px 26px;
+    }
+    .hero-copy{width:100%;}
+    .hero h1{font-size:42px;}
+    .hero p{font-size:12px;line-height:1.75;max-width:90%;}
+    .hero::before{width:230px;height:230px;right:-60px;top:110px;border-width:24px;}
+    .hero::after{display:none;}
+    .orb-blue{width:54px;height:54px;right:22px;top:210px;}
+    .orb-mint{width:70px;height:70px;right:76px;bottom:18px;}
+    .ring-small{display:none;}
+    .kpi-grid{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:34px;}
+    .kpi-card{min-height:112px;padding:16px;}
+    .kpi-value{font-size:23px;}
+    .content-heading h2{font-size:22px;}
+    section.dataset{padding:16px;border-radius:24px;}
+    .dataset-head{align-items:flex-start;flex-direction:column;}
+    .dataset-description{text-align:left;}
+    .chart-card{padding:12px 10px 7px;}
+    .chart-legend{gap:6px;}
+    .chart-legend .item{font-size:8.5px;padding:0 7px;}
+  }
+  @media (max-width:420px){
+    .main{padding-inline:14px;}
+    .kpi-grid{grid-template-columns:1fr;}
+    .hero h1{font-size:36px;}
+    .hero-meta{display:none;}
+    .dataset-head h2{font-size:21px;}
+  }
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <aside class="sidebar" aria-label="대시보드 탐색">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true"></div>
+      <div>
+        <div class="brand-name">RESALE LAB</div>
+        <div class="brand-sub">Market Analytics</div>
+      </div>
+    </div>
+
+    <div class="nav-label">Dashboard</div>
+    <nav class="side-nav">
+      <a class="nav-item active" href="#overview">
+        <span class="nav-icon">01</span>
+        Overview
+      </a>
+      <a class="nav-item" href="#sec-included">
+        <span class="nav-icon">02</span>
+        COS 포함
+      </a>
+    </nav>
+
+    <div class="sidebar-foot">
+      <strong>COS · BAG TYPE DATA</strong>
+      <p>제목에 COS/코스가 포함된 '가방' 매물만 추려 세부유형별 가격 분포와 이상치를 살펴봅니다.</p>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <span>Resale Market / Bag Type Study</span>
+      <div class="topbar-right">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span>Dataset Ready</span>
+      </div>
+    </div>
+
+    <header class="hero" id="overview">
+      <div class="hero-copy">
+        <div class="hero-kicker">COS BAG TYPE PRICE REPORT</div>
+        <h1><span>BAG TYPE</span> ANALYTICS.</h1>
+        <p>제목에 COS/코스가 포함된 '가방' 매물을 세부유형으로 나눠 가격 분포를 살펴봤습니다. 상자는 Q1–Q3, 굵은 선은 중앙값이며, 고가 이상치는 전부 확인할 수 있습니다.</p>
+        <div class="hero-meta">
+          <span class="hero-chip"><i></i> 세부유형별 가격 분포</span>
+          <span class="hero-chip"><i></i> 세부유형 필터 지원</span>
+        </div>
+      </div>
+      <span class="orb orb-blue" aria-hidden="true"></span>
+      <span class="orb orb-mint" aria-hidden="true"></span>
+      <span class="ring-small" aria-hidden="true"></span>
+    </header>
+
+    <section class="kpi-grid" aria-label="주요 지표">
+      <article class="kpi-card">
+        <div class="kpi-label">Total Bag Listings</div>
+        <div class="kpi-value num"><span id="total-n">-</span></div>
+        <div class="kpi-note">제목에 COS/코스 포함 가방 전체 매물</div>
+        <div class="kpi-line"></div>
+      </article>
+      <article class="kpi-card mint">
+        <div class="kpi-label">Detected Outliers</div>
+        <div class="kpi-value num"><span id="total-outliers">-</span></div>
+        <div class="kpi-note">통계적 고가 이상치 전체 (전부 표시)</div>
+        <div class="kpi-line"></div>
+      </article>
+      <article class="kpi-card">
+        <div class="kpi-label">Median Price</div>
+        <div class="kpi-value num" id="included-median">-</div>
+        <div class="kpi-note"><span id="m-included-n">-</span>건 기준 전체 대표가</div>
+        <div class="kpi-line"></div>
+      </article>
+    </section>
+
+    <div class="content-heading">
+      <div>
+        <div class="small">Bag Type Distribution</div>
+        <h2>세부유형별 가격 범위</h2>
+      </div>
+      <p>숄더백·토트백·크로스백·퀼팅백 등 세부유형별 중앙값과 사분위 범위를 비교합니다. 상세 수치와 이상치는 각 섹션에서 펼쳐볼 수 있습니다.</p>
+    </div>
+
+    <section class="dataset" id="sec-included">
+      <div class="dataset-head">
+        <div class="dataset-title-wrap">
+          <span class="dataset-index">DATASET / 01</span>
+          <h2>COS 포함 가방 <span class="dataset-tag" id="included-tag">n건</span></h2>
+        </div>
+        <div class="dataset-description">제목에 ‘코스’ 또는 ‘COS’가 포함된 가방 매물의 세부유형별 가격 분포</div>
+      </div>
+
+      <div class="filter-bar" id="filter-included">
+        <span class="filter-label">세부유형 필터</span>
+        <!-- 세부유형 칩은 JS에서 DATA 기준으로 자동 생성됩니다 -->
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-legend">
+          <span class="item"><span class="lg-box"></span>가격이 몰린 구간 (Q1–Q3)</span>
+          <span class="item"><span class="lg-line"></span>정상 범위 (이상치 제외 최저~최고)</span>
+          <span class="item"><span class="lg-dot"></span>중앙값</span>
+          <span class="item"><span class="lg-out"></span>이상치 매물</span>
+        </div>
+        <div id="chart-included"></div>
+      </div>
+
+      <details class="table-toggle">
+        <summary>세부유형별 상세 수치표 보기</summary>
+        <div class="tablewrap"><table id="table-included"></table></div>
+      </details>
+
+      <details class="table-toggle" id="out-included-wrap">
+        <summary>고가 이상치 매물 전체 보기 (<span id="out-included-count">0</span>건)</summary>
+        <div class="outlier-list" id="outlier-included"></div>
+        <p class="note">세부유형은 원본 데이터의 '세부 유형' 컬럼을 그대로 사용했습니다. 정상범위(Q1-1.5×IQR ~ Q3+1.5×IQR)를 벗어난 매물은 이상치로 분리했으며, 이상치 목록은 개수 제한 없이 전부 표시합니다.</p>
+      </details>
+    </section>
+
+    <footer>
+      가격은 판매글에 적힌 호가 기준이며 실거래가와 다를 수 있습니다. ※ 가격이 숫자로 표기되지 않은 '나눔'(무료 나눔) 매물은 통계에서 제외했습니다 (3건).
+    </footer>
+  </main>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+const DATA = {"included": {"items": [{"name": "에코백", "n": 8, "min": 1000, "wlo": 1000, "q1": 9250, "median": 16000, "q3": 21250, "whi": 25000, "max": 25000, "mean": 15000, "n_out": 0}, {"name": "숄더백", "n": 140, "min": 1, "wlo": 1, "q1": 20000, "median": 30000, "q3": 50000, "whi": 90000, "max": 110000, "mean": 35387, "n_out": 1}, {"name": "벨트백", "n": 8, "min": 16000, "wlo": 16000, "q1": 19750, "median": 32500, "q3": 46250, "whi": 60000, "max": 60000, "mean": 34375, "n_out": 0}, {"name": "플리츠백", "n": 5, "min": 3, "wlo": 30000, "q1": 30000, "median": 34000, "q3": 36000, "whi": 42000, "max": 42000, "mean": 28401, "n_out": 1}, {"name": "미니백", "n": 121, "min": 111, "wlo": 111, "q1": 28000, "median": 35000, "q3": 50000, "whi": 80000, "max": 110000, "mean": 40724, "n_out": 6}, {"name": "토트백", "n": 40, "min": 5, "wlo": 5, "q1": 19750, "median": 36000, "q3": 48500, "whi": 80000, "max": 250000, "mean": 47178, "n_out": 5}, {"name": "퀄팅백(구름백)", "n": 372, "min": 1, "wlo": 1, "q1": 28000, "median": 40000, "q3": 55000, "whi": 95000, "max": 999999, "mean": 45913, "n_out": 13}, {"name": "크로스백", "n": 112, "min": 1, "wlo": 1, "q1": 25000, "median": 40000, "q3": 54250, "whi": 90000, "max": 300000, "mean": 44987, "n_out": 5}, {"name": "가방(기타)", "n": 50, "min": 5000, "wlo": 5000, "q1": 30000, "median": 42500, "q3": 60000, "whi": 100000, "max": 320000, "mean": 58120, "n_out": 4}, {"name": "호보백", "n": 5, "min": 1, "wlo": 40000, "q1": 40000, "median": 45000, "q3": 50000, "whi": 50000, "max": 90000, "mean": 45000, "n_out": 2}, {"name": "새들백", "n": 8, "min": 1000, "wlo": 27000, "q1": 33000, "median": 47000, "q3": 50000, "whi": 50000, "max": 50000, "mean": 38375, "n_out": 1}, {"name": "클러치", "n": 12, "min": 20000, "wlo": 20000, "q1": 48000, "median": 80000, "q3": 96750, "whi": 120000, "max": 185000, "mean": 81000, "n_out": 1}, {"name": "메신저백", "n": 13, "min": 20000, "wlo": 20000, "q1": 60000, "median": 80000, "q3": 120000, "whi": 150000, "max": 260000, "mean": 93615, "n_out": 1}, {"name": "버킷백", "n": 6, "min": 25000, "wlo": 76000, "q1": 77750, "median": 84500, "q3": 89750, "whi": 91000, "max": 150000, "mean": 85167, "n_out": 2}, {"name": "볼링백", "n": 3, "min": 200000, "wlo": 200000, "q1": 205000, "median": 210000, "q3": 320000, "whi": 430000, "max": 430000, "mean": 280000, "n_out": 0}], "n": 903, "median": 39000, "outliers": [{"name": "퀄팅백(구름백)", "title": "COS 구름백 오버사이즈 블랙", "price": 999999}, {"name": "가방(기타)", "title": "코스 아틀리에 가방", "price": 320000}, {"name": "크로스백", "title": "코스 TRULLO 크로스바디 백 블랙", "price": 300000}, {"name": "메신저백", "title": "COS Quilted Messenger Bag Beige", "price": 260000}, {"name": "가방(기타)", "title": "코스 cos 패러다임 백", "price": 250000}, {"name": "토트백", "title": "COS 코스 패러다임 미니 토트백 블랙 가죽", "price": 250000}, {"name": "토트백", "title": "COS 코스 패러다임 미니 토트백 블랙 새상품", "price": 240000}, {"name": "퀄팅백(구름백)", "title": "COS 코스 구름 레더백 라지", "price": 200000}, {"name": "크로스백", "title": "[새상품] (12/27까지만 판매‼️) cos 코스 레더 크로스바디백 블랙", "price": 188000}, {"name": "클러치", "title": "COS 미니 카바텔리 클러치 블랙", "price": 185000}, {"name": "가방(기타)", "title": "COS 코스 복조리 백!!/ 1회 착용", "price": 150000}, {"name": "퀄팅백(구름백)", "title": "COS 폴리오 미니 레더백 (새상품)", "price": 150000}, {"name": "크로스백", "title": "(새상품) COS 코스 오버사이즈 퀼티드 크로스백 구름백 화이트", "price": 150000}, {"name": "버킷백", "title": "코스 COS 카바텔리 버킷백 블랙", "price": 150000}, {"name": "퀄팅백(구름백)", "title": "cos 마이크로백 레더화이트", "price": 140000}, {"name": "퀄팅백(구름백)", "title": "코스 오버사이즈퀼티드백(새상품)", "price": 140000}, {"name": "퀄팅백(구름백)", "title": "코스 오버사이즈 구름백 블랙", "price": 130000}, {"name": "크로스백", "title": "코스 cos 레더 마이크로 스윙 크로스바디", "price": 130000}, {"name": "가방(기타)", "title": "COS QUILTED MESSENGER 코스 퀄티트백", "price": 120000}, {"name": "토트백", "title": "COS 코스 레더 쇼퍼백", "price": 120000}, {"name": "숄더백", "title": "COS 블랙 나일론 토트/숄더백", "price": 110000}, {"name": "미니백", "title": "COS 코스 퀼티드 미니백 퍼플", "price": 110000}, {"name": "퀄팅백(구름백)", "title": "코스 가방 COS 오버사이즈 퀼티드백 오프화이트 판매합니다", "price": 105000}, {"name": "퀄팅백(구름백)", "title": "코스 실버 구름백", "price": 100000}, {"name": "퀄팅백(구름백)", "title": "COS 코스 퀼팅백 실버 새상품", "price": 100000}, {"name": "퀄팅백(구름백)", "title": "코스 구름백(제니 보부상백) 오버사이즈", "price": 100000}, {"name": "퀄팅백(구름백)", "title": "cos구름백 새상품", "price": 100000}, {"name": "퀄팅백(구름백)", "title": "코스 제니백", "price": 100000}, {"name": "크로스백", "title": "cos 오버 사이즈 퀼티드 크로스바디 백", "price": 100000}, {"name": "미니백", "title": "(정품)COS 코스 퀼티드 미니백 블랙 새상품 팝니다", "price": 99000}, {"name": "토트백", "title": "📌 COS 블랙 레더 쇼퍼백", "price": 99000}, {"name": "퀄팅백(구름백)", "title": "COS 퀼팅 마이크로백 양가죽 라임색", "price": 97000}, {"name": "토트백", "title": "COS 코스 소가죽토트백 쇼퍼백", "price": 96000}, {"name": "미니백", "title": "COS 퀼티드 미니백(구름빵)  카키 새 상품", "price": 90000}, {"name": "호보백", "title": "COS 가죽 호보백 블랙", "price": 90000}, {"name": "미니백", "title": "코스 퀼티드 미니백 핑크 새상품", "price": 85000}, {"name": "미니백", "title": "코스 퀄티드 미니백 핑크", "price": 85000}, {"name": "미니백", "title": "COS 코스 퀄티드 미니백 실버 새상품", "price": 84500}, {"name": "버킷백", "title": "COS 매쉬 버킷백 블랙", "price": 25000}, {"name": "새들백", "title": "코스 스타일 카키 새들백", "price": 1000}, {"name": "플리츠백", "title": "COS 코스 플리츠백 스몰 핑크", "price": 3}, {"name": "호보백", "title": "COS 소가죽 호보백", "price": 1}], "n_outliers_total": 42}};
+
+function won(v){
+  if (v >= 10000) {
+    const man = v/10000;
+    return (Number.isInteger(man) ? man : man.toFixed(1)) + '만원';
+  }
+  return v.toLocaleString('ko-KR') + '원';
+}
+function wonFull(v){ return v.toLocaleString('ko-KR') + '원'; }
+
+function niceMax(v){
+  const steps = [50000,100000,150000,200000,300000,500000,800000,1200000,2000000,3000000];
+  for (const s of steps) if (v <= s) return s;
+  return Math.ceil(v/1000000)*1000000;
+}
+
+function renderChart(containerId, items){
+  const el = document.getElementById(containerId);
+  if (!items.length){
+    el.innerHTML = '<div class="filter-empty">선택된 세부유형이 없습니다. 필터에서 항목을 선택해 주세요.</div>';
+    return;
+  }
+  const rowH = 30, padTop = 8, padBottom = 26, leftPad = 150, rightPad = 54;
+  const width = 860;
+  const domainMin = 3000;
+  const maxWhi = Math.max(...items.map(d => Math.max(d.whi, d.q3)));
+  const domainMax = niceMax(maxWhi * 1.08);
+  const plotW = width - leftPad - rightPad;
+  const height = items.length * rowH + padTop + padBottom;
+
+  const lx = Math.log10(domainMin), lX = Math.log10(domainMax);
+  const xs = v => leftPad + (Math.log10(Math.max(v,domainMin)) - lx) / (lX - lx) * plotW;
+
+  const ticks = [3000,10000,30000,100000,300000,1000000,3000000].filter(t => t >= domainMin && t <= domainMax);
+
+  let svg = `<svg class="rangechart" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">`;
+
+  ticks.forEach(t => {
+    const x = xs(t);
+    svg += `<line class="gridline" x1="${x}" y1="${padTop-2}" x2="${x}" y2="${height-padBottom+2}"/>`;
+    svg += `<text class="axis-label" x="${x}" y="${height-padBottom+16}" text-anchor="middle">${won(t)}</text>`;
+  });
+
+  items.forEach((d, i) => {
+    const y = padTop + i*rowH + rowH/2;
+    const boxTop = y - 7, boxH = 14;
+    const xWlo = xs(d.wlo), xQ1 = xs(d.q1), xMed = xs(d.median), xQ3 = xs(d.q3), xWhi = xs(d.whi);
+
+    svg += `<text class="row-label" x="${leftPad-10}" y="${y+4}" text-anchor="end">${d.name} <tspan class="row-n">· ${d.n}건</tspan></text>`;
+
+    svg += `<line class="whisker" x1="${xWlo}" y1="${y}" x2="${xQ1}" y2="${y}"/>`;
+    svg += `<line class="whisker" x1="${xQ3}" y1="${y}" x2="${xWhi}" y2="${y}"/>`;
+    svg += `<line class="whisker" x1="${xWlo}" y1="${y-5}" x2="${xWlo}" y2="${y+5}"/>`;
+    svg += `<line class="whisker" x1="${xWhi}" y1="${y-5}" x2="${xWhi}" y2="${y+5}"/>`;
+
+    svg += `<rect class="box" x="${Math.min(xQ1,xQ3)}" y="${boxTop}" width="${Math.max(Math.abs(xQ3-xQ1),1.5)}" height="${boxH}" rx="3"/>`;
+    svg += `<line class="median-tick" x1="${xMed}" y1="${boxTop-1}" x2="${xMed}" y2="${boxTop+boxH+1}"/>`;
+
+    const labelRight = xWhi + 8;
+    const fits = labelRight + 60 < width - 4;
+    svg += `<text class="medlabel" x="${fits ? labelRight : xMed}" y="${y+4}" text-anchor="${fits ? 'start' : 'middle'}" ${fits ? '' : `dy="-14"`}>${won(d.median)}</text>`;
+
+    svg += `<rect class="hit" data-idx="${i}" x="${leftPad}" y="${padTop+i*rowH}" width="${plotW+rightPad-10}" height="${rowH}"/>`;
+  });
+
+  svg += `</svg>`;
+  el.innerHTML = `<div class="chart-scroll">${svg}</div>`;
+
+  const tooltip = document.getElementById('tooltip');
+  el.querySelectorAll('.hit').forEach(hit => {
+    const d = items[+hit.dataset.idx];
+    hit.addEventListener('mousemove', e => {
+      tooltip.innerHTML = `<b>${d.name}</b> · ${d.n}건<br>`
+        + `최저 ${wonFull(d.min)} · 정상범위 ${wonFull(d.wlo)}~${wonFull(d.whi)}<br>`
+        + `Q1 ${wonFull(d.q1)} · 중앙값 ${wonFull(d.median)} · Q3 ${wonFull(d.q3)}<br>`
+        + `최고 ${wonFull(d.max)}${d.n_out ? ` (이상치 ${d.n_out}건 포함)` : ''}`;
+      tooltip.style.left = e.clientX + 'px';
+      tooltip.style.top = e.clientY + 'px';
+      tooltip.classList.add('show');
+    });
+    hit.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+  });
+}
+
+function renderTable(tableId, items){
+  const table = document.getElementById(tableId);
+  if (!items.length){
+    table.innerHTML = '<tbody><tr><td class="filter-empty">선택된 세부유형이 없습니다.</td></tr></tbody>';
+    return;
+  }
+  const cols = [
+    ['name','세부유형'], ['n','건수'], ['min','최저가'], ['q1','Q1'],
+    ['median','중앙값'], ['q3','Q3'], ['max','최고가'], ['mean','평균가']
+  ];
+  let html = '<thead><tr>' + cols.map(c => `<th>${c[1]}</th>`).join('') + '</tr></thead><tbody>';
+  items.forEach(d => {
+    html += '<tr>' + cols.map(([k]) => {
+      if (k === 'name') return `<td class="name">${d[k]}</td>`;
+      if (k === 'n') return `<td class="num">${d[k]}</td>`;
+      if (k === 'median') return `<td class="num median-cell">${wonFull(d[k])}</td>`;
+      return `<td class="num">${wonFull(d[k])}</td>`;
+    }).join('') + '</tr>';
+  });
+  html += '</tbody>';
+  table.innerHTML = html;
+}
+
+function renderOutliers(containerId, outliers){
+  const el = document.getElementById(containerId);
+  if (!outliers.length){
+    el.innerHTML = '<div class="filter-empty">해당 세부유형에는 이상치 매물이 없습니다.</div>';
+    return;
+  }
+  el.innerHTML = outliers.map(o =>
+    `<div class="outlier-row"><span class="t"><span class="c">${o.name}</span> ${o.title}</span><span class="p num">${wonFull(o.price)}</span></div>`
+  ).join('');
+}
+
+// ---- 세부유형 필터 ----
+const ALL_SUBTYPES = DATA.included.items.map(d => d.name);
+let activeSubtypes = new Set(ALL_SUBTYPES);
+
+function buildFilterBar(){
+  const bar = document.getElementById('filter-included');
+  const resetChip = document.createElement('span');
+  resetChip.className = 'filter-chip reset';
+  resetChip.textContent = '전체 보기';
+  resetChip.addEventListener('click', () => {
+    activeSubtypes = new Set(ALL_SUBTYPES);
+    refreshFilterChips();
+    applyFilter();
+  });
+
+  DATA.included.items.forEach(d => {
+    const chip = document.createElement('span');
+    chip.className = 'filter-chip active';
+    chip.dataset.subtype = d.name;
+    chip.innerHTML = `${d.name} <span class="n">${d.n}</span>`;
+    chip.addEventListener('click', () => {
+      if (activeSubtypes.has(d.name)) {
+        activeSubtypes.delete(d.name);
+      } else {
+        activeSubtypes.add(d.name);
+      }
+      refreshFilterChips();
+      applyFilter();
+    });
+    bar.appendChild(chip);
+  });
+
+  bar.appendChild(resetChip);
+}
+
+function refreshFilterChips(){
+  document.querySelectorAll('#filter-included .filter-chip[data-subtype]').forEach(chip => {
+    chip.classList.toggle('active', activeSubtypes.has(chip.dataset.subtype));
+  });
+}
+
+function applyFilter(){
+  const items = DATA.included.items.filter(d => activeSubtypes.has(d.name));
+  const outliers = DATA.included.outliers.filter(o => activeSubtypes.has(o.name));
+  const filteredN = items.reduce((sum, d) => sum + d.n, 0);
+
+  document.getElementById('included-tag').textContent = filteredN.toLocaleString('ko-KR') + '건';
+  document.getElementById('out-included-count').textContent = outliers.length;
+
+  renderChart('chart-included', items);
+  renderTable('table-included', items);
+  renderOutliers('outlier-included', outliers);
+}
+
+document.getElementById('m-included-n').textContent = DATA.included.n.toLocaleString('ko-KR');
+document.getElementById('included-tag').textContent = DATA.included.n.toLocaleString('ko-KR') + '건';
+document.getElementById('included-median').textContent = wonFull(DATA.included.median);
+document.getElementById('out-included-count').textContent = DATA.included.n_outliers_total;
+
+buildFilterBar();
+applyFilter();
+
+// Dashboard overview values
+const totalN = DATA.included.n;
+const totalOutliers = DATA.included.n_outliers_total;
+const totalEl = document.getElementById('total-n');
+const outlierEl = document.getElementById('total-outliers');
+if (totalEl) totalEl.textContent = totalN.toLocaleString('ko-KR');
+if (outlierEl) outlierEl.textContent = totalOutliers.toLocaleString('ko-KR');
+</script>
+</body>
+</html>
